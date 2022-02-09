@@ -12,7 +12,7 @@ class Fluke_5720A:
         self.SN = 829848492
         self.FWrev = "1.01b"
         self.status = False # True = OPERATE <> False = STBY
-        self.Magnitudes = ["V","A","DB","DMB","OHM"]
+        self.Magnitudes = ["V","A","DB","DBM","OHM"]
         self.x = "0"
         self.unit = "V"
         self.frequency = "0"
