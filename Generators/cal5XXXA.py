@@ -16,58 +16,89 @@ class Fluke_5720A:
         self.x = "0"
         self.unit = "V"
         self.frequency = "0"
+        self.log = False
+        self.__name__ = "generator"
     def __str__(self) -> str:
         return f"{self.name}:{self.bus}, {self.x} {self.unit}, {self.frequency} HZ"
+
+    def set_output(self,cmd):
+        self.x = cmd.split(" ")[1]
+        self.unit = cmd.split(" ")[2]
+
+    def set_frequency(self,cmd):
+        self.frequency = cmd.split(" ")[0]
+    
     def __call__(self, cmd:str) -> str:
         # Capitalize the whole string
         cmd = cmd.upper()
 
-        ####################################
-        ### BLOCK 1: regular expressions ###
-        ####################################
-        # Search in the command the setting for the output  (REG 1)
-        temp1 = "|".join([i for i in self.Magnitudes])
-        output1_reg = "(OUT [0-9]{1,3} (" + temp1 + "))"
-        # Search in the command the frequency               (REG 2)
-        output2_reg = "([0-9]{1,5} HZ)"
-        # Searcn in the commands the IDN                    (REG 3)
-        output3_reg = "(\*IDN\?)"
-        # Searcn in the commands the OPERATE                (REG 4)
-        output4_reg = "(OPERATE)"
-        # Searcn in the commands the STBY                   (REG 5)
-        output5_reg = "(STBY)"
+        # General variables
+        input_regular_exp = {}  ## Variable to store regular expressions
+        self.messages = []            ## Message to generate
         
-        message = ""
+        
+        ###############################################################################################################
+        ### BLOCK 1: regular expressions ##### {Regular expression:(Description, method/function that executes it)} ###
+        ###############################################################################################################
+        # Search in the command the setting for the output  (REG 1)
+        input_regular_exp["(OUT [0-9]{1,3} (" + "|".join([i for i in self.Magnitudes]) + "))"] = ("Sets the output of the instrument",
+                                                                                                    self.set_output)
+        # Search in the command the frequency               (REG 2)
+        input_regular_exp["([0-9]{1,5} HZ)"] = ("Sets the frequency at the output",
+                                                self.set_frequency)
+        # Search in the commands the IDN                    (REG 3)
+        input_regular_exp["(\*IDN\?)"] = ("Asks for the ID of the instrument",
+                                          lambda attr:self.messages.append(f"IDN:{self.name},SN:{self.SN},FWrev:{self.FWrev}"))
+        # Searcn in the commands the OPERATE                (REG 4)
+        input_regular_exp["(OPERATE)"] = ("Operates the instrument",
+                                          lambda attr:setattr(self,"status",True))
+        # Searcn in the commands the STBY                   (REG 5)
+        input_regular_exp["(STBY)"] = ("Operates the instrument",
+                                          lambda attr:setattr(self,"status",False))
+        # Searcn in the commands the STBY                   (REG 6)
+        input_regular_exp["(STBY)"] = ("Operates the instrument",
+                                          lambda attr:setattr(self,"status",False))
+        # Searcn in the commands the STBY                   (REG 6)
+        input_regular_exp["(STBY)"] = ("Operates the instrument",
+                                          lambda attr:setattr(self,"status",False))
 
-        #########################################
-        ### BLOCK 2: Search RE and set values ###
-        #########################################
-        ## ---- Search for the setting to set the output ----
-        Match = re.search(output1_reg,cmd)
-        if Match != None:
-            _,self.x,self.unit = cmd[Match.start():Match.end()].split(" ")
-        ## ---- Search for the setting to set the frequency ----
-        Match = re.search(output2_reg,cmd)
-        if Match != None:
-            self.frequency = cmd[Match.start():Match.end()].split(" ")
-        ## ---- Search for the command for IDN ----
-        Match = re.search(output3_reg,cmd)
-        if Match != None:
-            self.frequency = cmd[Match.start():Match.end()].split(" ")
-            message += f"IDN:{self.name},SN:{self.SN},FWrev:{self.FWrev}"
-        ## ---- Search for the operate command ----
-        Match = re.search(output4_reg,cmd)
-        if Match != None:
-            self.status = True
-        ## ---- Search for the standby command ----
-        Match = re.search(output5_reg,cmd)
-        if Match != None:
-            self.status = False
-        return message
+        ##########################################
+        #### BLOCK 2: Search RE and set values ###
+        ##########################################
+        for expression in input_regular_exp.keys():
+            # Search for command expression
+            Match = re.search(expression,cmd)
+            if Match != None:
+                # Extract single expression
+                single_cmd = cmd[Match.start():Match.end()]
+                # Show command
+                if self.log:
+                    print(single_cmd)
+                # Execute command
+                input_regular_exp[expression][1](single_cmd)
+        return self.messages
+
     def read(self):
         if self.status:
             time.sleep(3)
-            x = np.float(self.x)
+            x = np.float64(self.x)
             x = np.random.normal(x,x*0.000010)
             return f"{x} {self.unit},{self.frequency} HZ"
+    def read_setting(self):
+        if self.status:
+            return (np.float64(self.x),self.unit,np.float64(self.frequency),"HZ")
+        else:
+            return (np.float64(0),"V",np.float64(0),"HZ")
 
+if __name__ == "__main__":
+    Instrument = Fluke_5720A()
+    Instrument.log = False
+
+    # Set output
+    Instrument("OUT 1 V, 50 HZ")
+    print(Instrument)
+    print(Instrument.read())
+    Instrument("operate")
+    print(Instrument.read())
+    Instrument("stby")
+    print(f"Tipo {type(Instrument)}")
