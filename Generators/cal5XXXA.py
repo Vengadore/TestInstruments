@@ -41,7 +41,7 @@ class Fluke_5720A:
         ### BLOCK 1: regular expressions ##### {Regular expression:(Description, method/function that executes it)} ###
         ###############################################################################################################
         # Search in the command the setting for the output  (REG 1)
-        input_regular_exp["(OUT [0-9]{1,3} (" + "|".join([i for i in self.Magnitudes]) + "))"] = ("Sets the output of the instrument",
+        input_regular_exp["(OUT [0-9]{1,4} (" + "|".join([i for i in self.Magnitudes]) + "))"] = ("Sets the output of the instrument",
                                                                                                     self.set_output)
         # Search in the command the frequency               (REG 2)
         input_regular_exp["([0-9]{1,5} HZ)"] = ("Sets the frequency at the output",
