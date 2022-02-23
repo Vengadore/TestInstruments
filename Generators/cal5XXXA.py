@@ -1,3 +1,4 @@
+from os import lseek
 import numpy as np
 import time
 import re
@@ -6,7 +7,7 @@ import re
 # returning the expected value.
 
 class Fluke_5720A:
-    def __init__(self, bus_connection:str = "GPIB0"):
+    def __init__(self, bus_connection:str = "GPIB0",simulation = True):
         self.name = "FLUKE 5720A"
         self.bus = bus_connection
         self.SN = 829848492
@@ -18,12 +19,34 @@ class Fluke_5720A:
         self.frequency = "0"
         self.log = False
         self.__name__ = "generator"
+        self.SIM = simulation
+        if not self.SIM:
+            self.init_visa_connection()
+
     def __str__(self) -> str:
         return f"{self.name}:{self.bus}, {self.x} {self.unit}, {self.frequency} HZ"
 
     def set_output(self,cmd):
         self.x = cmd.split(" ")[1]
         self.unit = cmd.split(" ")[2]
+        if not self.SIM:
+            self.send_visa_cmd(f"{self.x} {self.unit}")
+
+    def set_frequency(self,cmd):
+        self.frequency = cmd.split(" ")[0]
+        # Mandar el comando por visa
+        if not self.SIM:
+            self.send_visa_cmd(f"{self.frequency} HZ")
+
+    def init_visa_connection(self):
+        rm = pyvisa.ResourceManager()
+        self.inst = rm.open_resource(self.bus)
+        return 1
+
+    def send_visa_cmd(self,cmd):
+        self.inst.write(cmd)
+        self.inst.write("*WAI")
+        return 1
 
     def set_frequency(self,cmd):
         self.frequency = cmd.split(" ")[0]
