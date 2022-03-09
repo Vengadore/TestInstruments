@@ -111,9 +111,7 @@ class Fluke_5720A:
         else:
             return (np.float64(0),"V",np.float64(0),"HZ")
 
-class Fluke_5500(Fluke_5720A):
-    
-    
+
 if __name__ == "__main__":
     Instrument = Fluke_5720A()
     Instrument.log = False
