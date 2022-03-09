@@ -49,6 +49,22 @@ class Fluke_5720A:
         self.inst.write("*WAI")
         return 1
 
+    def set_frequency(self,cmd):
+        self.frequency = cmd.split(" ")[0]
+        # Mandar el comando por visa
+        if not self.SIM:
+            self.send_visa_cmd(f"{self.frequency} HZ")
+
+    def init_visa_connection(self):
+        rm = pyvisa.ResourceManager()
+        self.inst = rm.open_resource(self.bus)
+        return 1
+
+    def send_visa_cmd(self,cmd):
+        self.inst.write(cmd)
+        self.inst.write("*WAI")
+        return 1
+
     def __call__(self, cmd:str) -> str:
         # Capitalize the whole string
         cmd = cmd.upper()
