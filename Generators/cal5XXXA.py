@@ -29,6 +29,7 @@ class Fluke_5720A:
     def set_output(self,cmd):
         self.x = cmd.split(" ")[1]
         self.unit = cmd.split(" ")[2]
+        # Mandar el comando por visa
         if not self.SIM:
             self.send_visa_cmd(f"{self.x} {self.unit}")
 
@@ -50,7 +51,20 @@ class Fluke_5720A:
 
     def set_frequency(self,cmd):
         self.frequency = cmd.split(" ")[0]
-    
+        # Mandar el comando por visa
+        if not self.SIM:
+            self.send_visa_cmd(f"{self.frequency} HZ")
+
+    def init_visa_connection(self):
+        rm = pyvisa.ResourceManager()
+        self.inst = rm.open_resource(self.bus)
+        return 1
+
+    def send_visa_cmd(self,cmd):
+        self.inst.write(cmd)
+        self.inst.write("*WAI")
+        return 1
+
     def __call__(self, cmd:str) -> str:
         # Capitalize the whole string
         cmd = cmd.upper()
@@ -112,6 +126,7 @@ class Fluke_5720A:
             return (np.float64(self.x),self.unit,np.float64(self.frequency),"HZ")
         else:
             return (np.float64(0),"V",np.float64(0),"HZ")
+
 
 if __name__ == "__main__":
     Instrument = Fluke_5720A()
