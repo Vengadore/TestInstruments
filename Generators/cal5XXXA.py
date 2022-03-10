@@ -1,4 +1,5 @@
 from os import lseek
+import pyvisa
 import numpy as np
 import time
 import re
