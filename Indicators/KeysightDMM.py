@@ -103,7 +103,7 @@ class Keysight_3458A:
     ## ACI
     def ACI(self,alcancesA: int = 1): 
         if not self.SIM:
-            self.inst.write(f"FUNC ACI {alcanceA}")
+            self.inst.write(f"FUNC ACI {alcancesA}")
             self.SET_Ndig(8)
             self.SET_NPLC(100)
         return 0
