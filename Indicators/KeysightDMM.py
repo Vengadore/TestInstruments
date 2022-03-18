@@ -27,7 +27,8 @@ class Keysight_3458A:
         self.alcances = {0:"100 mV",1:"1 V",
                          2:"10 V", 3:"100 V",
                          4:"1000 V"}
-
+        self.alcancesRes= {0:"10 ",1:"100",2:"1000",3:"10000",4:"100000",5:"1000000",6:"10000000",7:"100000000",8:"1000000000"}
+        self.alcancesA={0:"0.00001",1:"0.0001",2:"0.001",3:"0.01",4:"0.1",5:"1"}            
         
     def __str__(self) -> str:
         return f"{self.name}:{self.bus}, {self.x} {self.unit}"
@@ -57,6 +58,10 @@ class Keysight_3458A:
     def SET_RES(self, Resolution : float = 0.000001):
         self.inst.write(f"RES {Resolution}")
         return 0
+     ## Set OCOMP
+    def SET_OCOMP(self, OCOMP ):
+        self.inst.write(f"OCOMP {OCOMP}")
+        return 0              
     ## DC
     def DCV(self,alcance : int = 1):
         if not self.SIM:
@@ -73,6 +78,27 @@ class Keysight_3458A:
             self.SET_Ndig(8)
             self.inst.write("LFILTER ON") #? Se puede cambiar por funcion
             self.SET_RES(0.000001)
+        return 0
+    ## OHM
+    def RES(self,hilos,alcancesRes: int = 1):
+        if not self.SIM:
+            if hilos == "OHMF" :
+                self.inst.write(f"FUNC OHMF {alcancesRes}")
+                self.SET_Ndig(8)
+                self.SET_NPLC(100)
+                self.SET_OCOMP("ON")
+            else :
+                self.inst.write(f"FUNC OHM {alcancesRes}")
+                self.SET_Ndig(8)
+                self.SET_NPLC(300)
+                self.SET_OCOMP("OFF")                     
+        return 0  
+    ## ACI
+    def ACI(self,alcancesA: int = 1): 
+        if not self.SIM:
+            self.inst.write(f"FUNC ACI {alcancesA}")
+            self.SET_Ndig(8)
+            self.SET_NPLC(100)
         return 0
     ## Sample
     def SAMPLE(self,N_samples : int = 1):
