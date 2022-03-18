@@ -61,14 +61,6 @@ class Keysight_3458A:
      ## Set OCOMP
     def SET_OCOMP(self, OCOMP ):
         self.inst.write(f"OCOMP {OCOMP}")
-        return 0 
-    ## Set OHM    
-    def SET_OHM(self, OHM):
-        self.inst.write(f"OHM {OHM}") 
-        return 0 
-    ## Set OHMF    
-    def SET_OHMF(self, OHMF):
-        self.inst.write(f"OHMF {OHMF}") 
         return 0              
     ## DC
     def DCV(self,alcance : int = 1):
@@ -90,12 +82,13 @@ class Keysight_3458A:
     ## OHM
     def RES(self,hilos,alcancesRes: int = 1):
         if not self.SIM:
-            self.inst.write(f"FUNC {hilos} {alcancesRes}")
             if hilos == "OHMF" :
+                self.inst.write(f"FUNC OHMF {alcancesRes}")
                 self.SET_Ndig(8)
                 self.SET_NPLC(100)
                 self.SET_OCOMP("ON")
             else :
+                self.inst.write(f"FUNC OHM {alcancesRes}")
                 self.SET_Ndig(8)
                 self.SET_NPLC(300)
                 self.SET_OCOMP("OFF")                     
