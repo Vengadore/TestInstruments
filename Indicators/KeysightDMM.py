@@ -80,15 +80,15 @@ class Keysight_3458A:
             self.SET_RES(0.000001)
         return 0
     ## OHM
-    def RES(self,hilos,alcancesRes: int = 1):
+    def RESISTANCE(self,hilos,alcancesRes: int = 1):
         if not self.SIM:
             if hilos == "OHMF" :
-                self.inst.write(f"FUNC OHMF {alcancesRes}")
+                self.inst.write(f"FUNC OHMF {self.alcancesRes[alcancesRes]}")
                 self.SET_Ndig(8)
                 self.SET_NPLC(100)
                 self.SET_OCOMP("ON")
             else :
-                self.inst.write(f"FUNC OHM {alcancesRes}")
+                self.inst.write(f"FUNC OHM {self.alcancesRes[alcancesRes]}")
                 self.SET_Ndig(8)
                 self.SET_NPLC(300)
                 self.SET_OCOMP("OFF")                     
@@ -96,7 +96,14 @@ class Keysight_3458A:
     ## ACI
     def ACI(self,alcancesA: int = 1): 
         if not self.SIM:
-            self.inst.write(f"FUNC ACI {alcancesA}")
+            self.inst.write(f"FUNC ACI {self.alcancesA[alcancesA]}")
+            self.SET_Ndig(8)
+            self.SET_NPLC(100)
+        return 0
+    ## DCI
+    def DCI(self,alcancesA: int = 1): 
+        if not self.SIM:
+            self.inst.write(f"FUNC DCI {self.alcancesA[alcancesA]}")
             self.SET_Ndig(8)
             self.SET_NPLC(100)
         return 0
