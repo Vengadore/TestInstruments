@@ -111,10 +111,10 @@ class Keysight_3458A:
     def FREQ(self,FSOURCE,resolutionFREQPER: int = 1,intervalo: int = 1):
         if not self.SIM:
             if FSOURCE == "ACV":
-                self.inst.write(f"FUNC FREQ {self.alcances[intervalo]},{resolutionFREQPER[resolutionFREQ]}")
+                self.inst.write(f"FUNC FREQ {self.alcances[intervalo]},{resolutionFREQPER[resolutionFREQPER]}")
                 self.inst.write("FSOURCE ACV")
             else:
-                self.inst.write(f"FUNC FREQ {self.alcances[intervalo]},{resolutionFREQPER[resolutionFREQ]}")
+                self.inst.write(f"FUNC FREQ {self.alcances[intervalo]},{resolutionFREQPER[resolutionFREQPER]}")
                 self.inst.write("FSOURCE ACI")    
         return 0  
     ## PER
