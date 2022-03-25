@@ -118,7 +118,7 @@ class Keysight_3458A:
                 self.inst.write("FSOURCE ACI")    
         return 0  
     ## PER
-     def PER(self,FSOURCE,resolutionFREQ: int = 1,intervalo):
+    def PER(self,FSOURCE,resolutionFREQ: int = 1,intervalo):
         if not self.SIM:
             if FSOURCE == "ACV":
                 self.inst.write(f"FUNC PER {self.alcances[intervalo]},{resolutionFREQPER[resolutionFREQ]}")
