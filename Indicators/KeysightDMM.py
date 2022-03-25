@@ -29,7 +29,7 @@ class Keysight_3458A:
                          4:"1000 V"}
         self.alcancesRes= {0:"10 ",1:"100",2:"1000",3:"10000",4:"100000",5:"1000000",6:"10000000",7:"100000000",8:"1000000000"}
         self.alcancesA={0:"0.00001",1:"0.0001",2:"0.001",3:"0.01",4:"0.1",5:"1"}            
-        
+        self.resolutionFREQPER={0:"0.00001",1:"0.0001",2:"0.001",3:".01",4:".1"} ##Depende de la resolución es el tiempo y # de muestras.
     def __str__(self) -> str:
         return f"{self.name}:{self.bus}, {self.x} {self.unit}"
 
@@ -61,7 +61,7 @@ class Keysight_3458A:
      ## Set OCOMP
     def SET_OCOMP(self, OCOMP ):
         self.inst.write(f"OCOMP {OCOMP}")
-        return 0              
+        return 0           
     ## DC
     def DCV(self,alcance : int = 1):
         if not self.SIM:
@@ -107,6 +107,26 @@ class Keysight_3458A:
             self.SET_Ndig(8)
             self.SET_NPLC(100)
         return 0
+    ## FREQ
+    def FREQ(self,FSOURCE,resolutionFREQ: int = 1,intervalo):
+        if not self.SIM:
+            if FSOURCE == "ACV":
+                self.inst.write(f"FUNC FREQ {self.alcances{intervalo},{resolutionFREQPER[resolutionFREQ]}}")
+                self.inst.write("FSOURCE ACV")
+            else:
+                self.inst.write(f"FUNC FREQ {self.alacanceA{intervalo},self.resolutionFREQPER[resolutionFREQ]}")
+                self.inst.write("FSOURCE ACI")    
+        return 0  
+    ## PER
+     def PER(self,FSOURCE,resolutionFREQ: int = 1,intervalo):
+        if not self.SIM:
+            if FSOURCE == "ACV":
+                self.inst.write(f"FUNC PER {self.alcances{intervalo},{resolutionFREQPER[resolutionFREQ]}}")
+                self.inst.write("FSOURCE ACV")
+            else:
+                self.inst.write(f"FUNC PER {self.alacanceA{intervalo},self.resolutionFREQPER[resolutionFREQ]}")
+                self.inst.write("FSOURCE ACI")    
+        return 0        
     ## Sample
     def SAMPLE(self,N_samples : int = 1):
         Samples = []
