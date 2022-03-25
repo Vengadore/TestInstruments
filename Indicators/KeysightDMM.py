@@ -108,7 +108,7 @@ class Keysight_3458A:
             self.SET_NPLC(100)
         return 0
     ## FREQ
-    def FREQ(self,FSOURCE,resolutionFREQ: int = 1,intervalo):
+    def FREQ(self,FSOURCE,resolutionFREQ: int = 1,intervalo: int = 1):
         if not self.SIM:
             if FSOURCE == "ACV":
                 self.inst.write(f"FUNC FREQ {self.alcances[intervalo]},{resolutionFREQPER[resolutionFREQ]}")
@@ -118,7 +118,7 @@ class Keysight_3458A:
                 self.inst.write("FSOURCE ACI")    
         return 0  
     ## PER
-    def PER(self,FSOURCE,resolutionFREQ: int = 1,intervalo):
+    def PER(self,FSOURCE,resolutionFREQ: int = 1,intervalo: int = 1):
         if not self.SIM:
             if FSOURCE == "ACV":
                 self.inst.write(f"FUNC PER {self.alcances[intervalo]},{resolutionFREQPER[resolutionFREQ]}")
