@@ -108,7 +108,7 @@ class Keysight_3458A:
             self.SET_NPLC(100)
         return 0
     ## FREQ
-    def FREQ(self,FSOURCE,resolutionFREQPER: int = 1,intervalo: int = 1):
+    def FREQ(self,FSOURCE,intervalo,resolutionFREQPER): #Intervalo= alcance de tension o corriente en la que se medira la resistencia.
         if not self.SIM:
             if FSOURCE == "ACV":
                 self.inst.write(f"FUNC FREQ {self.alcances[intervalo]},{resolutionFREQPER[resolutionFREQPER]}")
@@ -118,7 +118,7 @@ class Keysight_3458A:
                 self.inst.write("FSOURCE ACI")    
         return 0  
     ## PER
-    def PER(self,FSOURCE,resolutionFREQPER: int = 1,intervalo: int = 1):
+    def PER(self,FSOURCE,intervalo,resolutionFREQPER):
         if not self.SIM:
             if FSOURCE == "ACV":
                 self.inst.write(f"FUNC PER {self.alcances[intervalo]},{resolutionFREQPER[resolutionFREQ]}")
