@@ -24,12 +24,13 @@ class Keysight_3458A:
             self.init_visa_connection()
 
         ## Alcances
-        self.alcances = {0:"100 mV",1:"1 V",
-                         2:"10 V", 3:"100 V",
-                         4:"1000 V"}
-        self.alcancesRes= {0:"10 ",1:"100",2:"1000",3:"10000",4:"100000",5:"1000000",6:"10000000",7:"100000000",8:"1000000000"}
-        self.alcancesA={0:"0.00001",1:"0.0001",2:"0.001",3:"0.01",4:"0.1",5:"1"}            
-        
+        self.alcancesDCVACV = {0:"10 mV",1:"100 mV",2:"1 V",3:"10 V", 4:"100 V",5:"1000 V"}
+        self.alcancesOHM = {0:"10 OHM",1:"100 OHM",2:"1 KOHM",3:"10 KOHM",4:"100 KOHM",5:"1 MOHM",6:"10 MOHM",7:"100 MOHM",8:"1 GOHM"}
+        self.alcancesDCIACI = {0:"10 uA",1:"100 uA",2:"1 mA",3:"10 mA",4:"100 mA",5:"1 A"}            
+        self.resolutionFREQPER = {0:"0.00001",1:"0.0001",2:"0.001",3:".01",4:".1"} ##Depende de la resolución es el tiempo y # de muestras.
+
+        Prefijos = {"KOHM":1E3,"MOHM":1E6,"GOHM":1E9,"mV":1E-3,"mA":1E-3,"uA":1E-6,"nA":1E-9,"V":1E0,"A":1E0,"OHM":1E0}
+
     def __str__(self) -> str:
         return f"{self.name}:{self.bus}, {self.x} {self.unit}"
 
@@ -61,18 +62,28 @@ class Keysight_3458A:
      ## Set OCOMP
     def SET_OCOMP(self, OCOMP ):
         self.inst.write(f"OCOMP {OCOMP}")
-        return 0              
+        return 0 
+
+    ## Traducción de Prefijos
+    def convertion(valor):
+        print(valor.split(" "))
+        val,pref = valor.split(" ")
+        val = int(val) * Prefijos[pref]
+        return val
+
     ## DC
-    def DCV(self,alcance : int = 1):
+    def DCV(self,alcanceDCV : int = 1):
         if not self.SIM:
-            self.inst.write(f"FUNC DCV {alcance}")
+            ranges=convertion(alcanceDCV)
+            self.inst.write(f"FUNC DCV {ranges}")
             self.SET_Ndig(8)
             self.SET_NPLC(100)
         return 0
     ## ACVSYNC
-    def ACVSYNC(self,alcance : int = 1):
+    def ACVSYNC(self,alcanceACVSYNC : int = 1):
         if not self.SIM:
-            self.inst.write(f"ACV {alcance}")
+            ranges=convertion(alcanceACVSYNC)
+            self.inst.write(f"ACV {ranges}")
             self.inst.write("SETACV SYNC")
             self.SET_NPLC(100)
             self.SET_Ndig(8)
@@ -80,33 +91,57 @@ class Keysight_3458A:
             self.SET_RES(0.000001)
         return 0
     ## OHM
-    def RESISTANCE(self,hilos,alcancesRes: int = 1):
+    def OHM(self,hilos,alcanceOHM: int = 1):
         if not self.SIM:
+            ranges=convertion(alcanceOHM)
             if hilos == "OHMF" :
-                self.inst.write(f"FUNC OHMF {self.alcancesRes[alcancesRes]}")
+                self.inst.write(f"FUNC OHMF {ranges}")
                 self.SET_Ndig(8)
                 self.SET_NPLC(100)
                 self.SET_OCOMP("ON")
             else :
-                self.inst.write(f"FUNC OHM {self.alcancesRes[alcancesRes]}")
+                self.inst.write(f"FUNC OHM {ranges}")
                 self.SET_Ndig(8)
                 self.SET_NPLC(300)
                 self.SET_OCOMP("OFF")                     
         return 0  
     ## ACI
-    def ACI(self,alcancesA: int = 1): 
+    def ACI(self,alcanceACI: int = 1): 
         if not self.SIM:
-            self.inst.write(f"FUNC ACI {self.alcancesA[alcancesA]}")
+            ranges=convertion(alcanceACI)
+            self.inst.write(f"FUNC ACI {ranges}")
             self.SET_Ndig(8)
             self.SET_NPLC(100)
         return 0
     ## DCI
-    def DCI(self,alcancesA: int = 1): 
+    def DCI(self,alcanceDCI: int = 1): 
         if not self.SIM:
-            self.inst.write(f"FUNC DCI {self.alcancesA[alcancesA]}")
+            ranges=convertion(alcanceDCI)
+            self.inst.write(f"FUNC DCI {ranges}")
             self.SET_Ndig(8)
             self.SET_NPLC(100)
         return 0
+    ## FREQ
+    def FREQ(self,FSOURCE,alcanceACVorACI: int = 1,resolutionFREQPER):
+            ranges=convertion(alcanceACVorACI)
+            if FSOURCE == "ACV":          
+                self.inst.write("FSOURCE ACV")
+                self.inst.write(f"FUNC FREQ {ranges},{self.resolutionFREQPER[resolutionFREQPER]}")
+            else:
+                self.inst.write("FSOURCE ACI")  
+                self.inst.write(f"FUNC FREQ {ranges},{self.resolutionFREQPER[resolutionFREQPER]}")  
+        return 0  
+    ## PER
+    def PER(self,FSOURCE,alcanceACVorACI: int = 1,resolutionFREQPER):
+        if not self.SIM:
+            ranges=convertion(alcanceACVorACI)
+            if FSOURCE == "ACV":
+                self.inst.write("FSOURCE ACV")
+                self.inst.write(f"FUNC PER {ranges},{self.resolutionFREQPER[resolutionFREQPER]}")
+            else:
+                self.inst.write("FSOURCE ACI") 
+                self.inst.write(f"FUNC PER {ranges},{self.resolutionFREQPER[resolutionFREQ]}")   
+        return 0        
     ## Sample
     def SAMPLE(self,N_samples : int = 1):
         Samples = []
