@@ -5,7 +5,7 @@ import numpy as np
 import time
 import re
 from Generators import cal5XXXA
-
+import traductor as convertion 
 
 class Keysight_3458A:
     def __init__(self, bus_connection:str = "GPIB1",simulation = True):
