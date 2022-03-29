@@ -122,7 +122,7 @@ class Keysight_3458A:
             self.SET_NPLC(100)
         return 0
     ## FREQ
-    def FREQ(self,FSOURCE,alcanceACVorACI: int = 1,resolutionFREQPER):
+    def FREQ(self,FSOURCE,resolutionFREQPER,alcanceACVorACI: int = 1):
             ranges=convertion(alcanceACVorACI)
             if FSOURCE == "ACV":          
                 self.inst.write("FSOURCE ACV")
@@ -130,9 +130,9 @@ class Keysight_3458A:
             else:
                 self.inst.write("FSOURCE ACI")  
                 self.inst.write(f"FUNC FREQ {ranges},{self.resolutionFREQPER[resolutionFREQPER]}")  
-        return 0  
+            return 0  
     ## PER
-    def PER(self,FSOURCE,alcanceACVorACI: int = 1,resolutionFREQPER):
+    def PER(self,FSOURCE,resolutionFREQPER,alcanceACVorACI: int = 1):
         if not self.SIM:
             ranges=convertion(alcanceACVorACI)
             if FSOURCE == "ACV":
@@ -141,7 +141,7 @@ class Keysight_3458A:
             else:
                 self.inst.write("FSOURCE ACI") 
                 self.inst.write(f"FUNC PER {ranges},{self.resolutionFREQPER[resolutionFREQ]}")   
-        return 0        
+            return 0        
     ## Sample
     def SAMPLE(self,N_samples : int = 1):
         Samples = []
