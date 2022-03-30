@@ -17,6 +17,7 @@ class Keysight_3458A:
         self.x = "0"
         self.unit = "V"
         self.frequency = "0"
+        self.set_measurement_functions("DCV") # This is the default value of the multimeter
         self.log = False
         self.SIM = simulation
         if not self.SIM:
@@ -33,6 +34,14 @@ class Keysight_3458A:
     def __str__(self) -> str:
         return f"{self.name}:{self.bus}, {self.x} {self.unit}"
 
+    def set_measurement_functions(self,Function):
+        FUNCTION = {1:"DCV",2:"ACV",3:"ACDCV",4:"OHM",
+                    5:"OHMF",6:"DCI",7:"ACI",8:"ACDCI",
+                    9:"FREQ",10:"PER",11:"DSAC",12:"DSDC",
+                    13:"SSAC",14:"SSDC"}
+        #Change keys for values
+        self.MeasurementFunction = res = dict((v,k) for k,v in FUNCTION.items())[Function]
+
     def __name__(self):
         return "indicator"
 
@@ -41,6 +50,12 @@ class Keysight_3458A:
         self.inst = rm.open_resource(self.bus, read_termination = "\r")
         self.inst.timeout = 40000
         return 0
+
+    def query(self,cmd):
+        if self.SIM:
+            return "1, 0"
+        else:
+            self.inst.query(cmd)
     
     def reset(self):
         self.inst.write("RESET")
