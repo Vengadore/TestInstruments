@@ -5,7 +5,6 @@ import numpy as np
 import time
 import re
 from Generators import cal5XXXA
-import traductor as convertion 
 
 class Keysight_3458A:
     def __init__(self, bus_connection:str = "GPIB1",simulation = True):
@@ -65,7 +64,7 @@ class Keysight_3458A:
         return 0 
 
     ## Traducción de Prefijos
-    def convertion(valor):
+    def convertion(self,valor):
         print(valor.split(" "))
         val,pref = valor.split(" ")
         val = int(val) * Prefijos[pref]
