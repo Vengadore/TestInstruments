@@ -4,7 +4,7 @@ sys.path.append("../../../Indicators")
 from KeysightDMM import Keysight_3458A 
 
 ## Test parameters
-SIMULATION = True
+SIMULATION = False
 LOGS       = True
 
 ## Test functions
@@ -45,28 +45,28 @@ class ConfigurationTest(unittest.TestCase):
         return 0
 
     def Measurement_function(self,expected:str):
-        actual_measurement_function = self.FUNCTION[int(self.device.query("FUNC?").split(",")[0])]
+        actual_measurement_function = self.FUNCTION[int(self.device.inst.query("FUNC?").split(",")[0])]
         self.assertEqual(expected,actual_measurement_function,"Error in MEASUREMENT FUNCTION configuration")
         return 0
     
     def Measurement_range(self,expected:float):
-        actual_measurement_range = float(self.device.query("FUNC?").split(" ")[1])
+        actual_measurement_range = float(self.device.inst.query("FUNC?").split(" ")[1])
         self.assertEqual(expected,actual_measurement_range,"Error in MEASUREMENT RANGE configuration")
         return 0
 
     def NPLC(self,expected:float):
-        actual_NPLC = float(self.device.query("NPLC?"))
+        actual_NPLC = float(self.device.inst.query("NPLC?"))
         self.assertEqual(expected,actual_NPLC,"Error in NPLC configuration")
         return 0
     
     def RES(self,expected:float):
-        actual_RES = float(self.device.query("RES?"))
+        actual_RES = float(self.device.inst.query("RES?"))
         self.assertEqual(expected,actual_RES,"Error in RES configuration")
         return 0
 
 
 ## Start Multimeter and test enviroment
-Instrument = Keysight_3458A(bus_connection = 0,simulation=SIMULATION)
+Instrument = Keysight_3458A(bus_connection='GPIB0::23::INSTR',simulation=SIMULATION)
 TEST = ConfigurationTest()
 # Assign device to TEST
 TEST.device = Instrument
@@ -117,4 +117,16 @@ Instrument.DCV(MEASUREMENT_RANGE)
 TEST.test_configuration(ConfigParameters)
 
 
+###################
+##### TEST 03 #####
+###################
+# Configuration: ACVSYNC @ 100 mV
+MEASUREMENT_FUNCTION = "ACV"
+MEASUREMENT_RANGE    = 0.1
+ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
+                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
+# Sending configuration to instrument
+Instrument.ACVSYNC(MEASUREMENT_RANGE)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
 
