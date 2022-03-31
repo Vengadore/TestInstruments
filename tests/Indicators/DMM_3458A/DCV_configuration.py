@@ -130,3 +130,63 @@ Instrument.ACVSYNC(MEASUREMENT_RANGE)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
+
+###################
+##### TEST 04 #####
+###################
+# Configuration: OHMF @ 1 KOhm (Medición de resistencia a 4 hilos, alcance de 100 Ohms)
+MEASUREMENT_FUNCTION = "OHMF"
+MEASUREMENT_RANGE    = 1000
+ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
+                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
+# Sending configuration to instrument
+Instrument.OHM("OHMF","1K")
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+
+###################
+##### TEST 04 #####
+###################
+# Configuration: OHMF @ 1 KOhm (Medición de resistencia a 4 hilos, alcance de 100 Ohms)
+MEASUREMENT_FUNCTION = "OHMF"
+MEASUREMENT_RANGE    = 1000
+ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
+                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
+# Sending configuration to instrument
+Instrument.OHM("OHMF",1000)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+
+###################
+##### TEST 05 #####
+###################
+# Configuration: OHMF @ 1 KOhm (Medición de resistencia a 4 hilos, alcance de 100 Ohms)
+MEASUREMENT_FUNCTION = "OHM"
+MEASUREMENT_RANGE    = 100000
+ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
+                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
+# Sending configuration to instrument
+Instrument.OHM("OHMF","100K")
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+
+###################
+##### TEST 06 #####
+###################
+# Configuration: OHMF @ 1 KOhm (Medición de resistencia a 4 hilos, alcance de 100 Ohms)
+MEASUREMENT_FUNCTION = "OHMF"
+MEASUREMENT_RANGE    = 100000
+ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
+                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
+# Sending configuration to instrument
+Instrument.OHM("OHMF",100000)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+
+
+#if __name__ == '__main__':
+#    unittest.main()
