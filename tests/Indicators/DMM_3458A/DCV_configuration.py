@@ -24,13 +24,14 @@ class ConfigurationTest(unittest.TestCase):
 #   MEASUREMENT_RANGE     
 #   NPLC 
 #   RES 
-# 
+#   NDIG
 
     def test_configuration(self,configuration:dict):
         map_tests = {"MEASUREMENT_FUNCTION":self.Measurement_function,
                      "MEASUREMENT_RANGE":self.Measurement_range,
                      "NPLC":self.NPLC,
-                     "RES":self.RES}
+                     "RES":self.RES,
+                     "NDIG":self.NDIG}
         # Configurations to tests
         AvailableConfigurations = [key for key in configuration.keys() if key in map_tests.keys()] # Only tests in the map_tests will be tested
         SkippedTests = [key for key in configuration.keys() if key not in map_tests.keys()]        # If the test is not int map_tests it is skipped
@@ -64,6 +65,11 @@ class ConfigurationTest(unittest.TestCase):
         self.assertEqual(expected,actual_RES,"Error in RES configuration")
         return 0
 
+    def NDIG(self,expected:float):
+        actual_RES = float(self.device.inst.query("NDIG?"))
+        self.assertEqual(expected,actual_RES,"Error in NDIG configuration")
+        return 0
+
 
 ## Start Multimeter and test enviroment
 Instrument = Keysight_3458A(bus_connection='GPIB0::23::INSTR',simulation=SIMULATION)
@@ -80,11 +86,34 @@ TEST.device = Instrument
 ###################
 # Configuration: DCV @ 10 V
 MEASUREMENT_FUNCTION = "DCV"
-MEASUREMENT_RANGE    = 10
+MEASUREMENT_RANGE    = 10 
+NPLC                 = 100
+NDIG                 = 8
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
-                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
+                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE,
+                    "NPLC":NPLC,
+                    "NDIG":NDIG}
 # Sending configuration to instrument
 Instrument.DCV(MEASUREMENT_RANGE)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+
+###################
+##### TEST 00b ####
+###################
+# Configuration: DCV @ 10 V, NPLC=0.1
+MEASUREMENT_FUNCTION = "DCV"
+MEASUREMENT_RANGE    = 10
+NPLC                 = 100
+NDIG                 = 8
+ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
+                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE,
+                    "NPLC":NPLC,
+                    "NDIG":NDIG}
+# Sending configuration to instrument
+Instrument.DCV(MEASUREMENT_RANGE)
+Instrument.SET_NPLC(100)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -140,7 +169,7 @@ MEASUREMENT_RANGE    = 1000
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
                     "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
 # Sending configuration to instrument
-Instrument.OHM("OHMF","1K")
+Instrument.OHM("OHMF","1 K")
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -162,13 +191,13 @@ TEST.test_configuration(ConfigParameters)
 ###################
 ##### TEST 05 #####
 ###################
-# Configuration: OHMF @ 1 KOhm (Medición de resistencia a 4 hilos, alcance de 100 Ohms)
-MEASUREMENT_FUNCTION = "OHM"
+# Configuration: OHMF @ 100 KOhm (Medición de resistencia a 4 hilos, alcance de 100 kOhms)
+MEASUREMENT_FUNCTION = "OHMF"
 MEASUREMENT_RANGE    = 100000
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
                     "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
 # Sending configuration to instrument
-Instrument.OHM("OHMF","100K")
+Instrument.OHM("OHMF","100 K")
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -176,7 +205,7 @@ TEST.test_configuration(ConfigParameters)
 ###################
 ##### TEST 06 #####
 ###################
-# Configuration: OHMF @ 1 KOhm (Medición de resistencia a 4 hilos, alcance de 100 Ohms)
+# Configuration: OHMF @ 100 KOhm (Medición de resistencia a 4 hilos, alcance de 100 kOhms)
 MEASUREMENT_FUNCTION = "OHMF"
 MEASUREMENT_RANGE    = 100000
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
@@ -185,6 +214,102 @@ ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
 Instrument.OHM("OHMF",100000)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
+
+
+
+###################
+##### TEST 08 #####
+###################
+# Configuration: OHM @ 100 KOhm (Medición de resistencia a 2 hilos, alcance de 100 KOhms)
+
+
+
+
+
+###################
+##### TEST 09 #####
+###################
+# Configuration: OHM @ 100 KOhm (Medición de resistencia a 2 hilos, alcance de 100 KOhms)
+
+
+
+
+###################
+##### TEST 10 #####
+###################
+# Configuration: DCI @ 1mA (Medición de corriente directa, alcance de 1mA)
+MEASUREMENT_FUNCTION = "DCI"
+MEASUREMENT_RANGE    = 0.001
+ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
+                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
+# Sending configuration to instrument
+Instrument.DCI("1 m")
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+
+###################
+##### TEST 11 #####
+###################
+# Configuration: DCI @ 1mA (Medición de corriente directa, alcance de 1mA)
+MEASUREMENT_FUNCTION = "DCI"
+MEASUREMENT_RANGE    = 0.001
+ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
+                    "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
+# Sending configuration to instrument
+Instrument.DCI(0.001)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+
+
+###################
+##### TEST 11 #####
+###################
+# Configuration: DCI @ 10mA (Medición de corriente directa, alcance de 10mA)
+
+
+
+
+###################
+##### TEST 12 #####
+###################
+# Configuration: DCI @ 100mA (Medición de corriente directa, alcance de 100mA)
+
+
+
+###################
+##### TEST 13 #####
+###################
+# Configuration: DCI @ 1A (Medición de corriente directa, alcance de 1A)
+
+
+
+
+###################
+##### TEST 14 #####
+###################
+# Configuration: ACI @ 1mA (Medición de corriente directa, alcance de 1mA)
+
+
+###################
+##### TEST 15 #####
+###################
+# Configuration: ACI @ 10mA (Medición de corriente directa, alcance de 10mA)
+
+
+
+###################
+##### TEST 16 #####
+###################
+# Configuration: ACI @ 100mA (Medición de corriente directa, alcance de 100mA)
+
+
+
+###################
+##### TEST 17 #####
+###################
+# Configuration: ACI @ 1A (Medición de corriente directa, alcance de 1A)
 
 
 
