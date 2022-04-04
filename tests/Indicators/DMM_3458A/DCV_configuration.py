@@ -1,4 +1,3 @@
-from codecs import namereplace_errors
 import unittest
 import sys
 sys.path.append("../../../Indicators")
@@ -87,11 +86,7 @@ TEST.device = Instrument
 ###################
 # Configuration: DCV @ 10 V
 MEASUREMENT_FUNCTION = "DCV"
-<<<<<<< HEAD
 MEASUREMENT_RANGE    = 10 
-=======
-MEASUREMENT_RANGE    = 10
->>>>>>> a948caf524d1a6c2485b6ba3ba74089e62ed8728
 NPLC                 = 100
 NDIG                 = 8
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
@@ -110,11 +105,7 @@ TEST.test_configuration(ConfigParameters)
 # Configuration: DCV @ 10 V, NPLC=0.1
 MEASUREMENT_FUNCTION = "DCV"
 MEASUREMENT_RANGE    = 10
-<<<<<<< HEAD
 NPLC                 = 100
-=======
-NPLC                 = 0.1
->>>>>>> a948caf524d1a6c2485b6ba3ba74089e62ed8728
 NDIG                 = 8
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
                     "MEASUREMENT_RANGE" : MEASUREMENT_RANGE,
@@ -122,11 +113,7 @@ ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
                     "NDIG":NDIG}
 # Sending configuration to instrument
 Instrument.DCV(MEASUREMENT_RANGE)
-<<<<<<< HEAD
 Instrument.SET_NPLC(100)
-=======
-Instrument.SET_NPLC(0.1)
->>>>>>> a948caf524d1a6c2485b6ba3ba74089e62ed8728
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -182,11 +169,7 @@ MEASUREMENT_RANGE    = 1000
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
                     "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
 # Sending configuration to instrument
-<<<<<<< HEAD
 Instrument.OHM("OHMF","1 K")
-=======
-Instrument.OHM("OHMF","1 KOHM")
->>>>>>> a948caf524d1a6c2485b6ba3ba74089e62ed8728
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -209,20 +192,12 @@ TEST.test_configuration(ConfigParameters)
 ##### TEST 05 #####
 ###################
 # Configuration: OHMF @ 100 KOhm (Medición de resistencia a 4 hilos, alcance de 100 kOhms)
-<<<<<<< HEAD
 MEASUREMENT_FUNCTION = "OHMF"
-=======
-MEASUREMENT_FUNCTION = "OHM"
->>>>>>> a948caf524d1a6c2485b6ba3ba74089e62ed8728
 MEASUREMENT_RANGE    = 100000
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
                     "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
 # Sending configuration to instrument
-<<<<<<< HEAD
 Instrument.OHM("OHMF","100 K")
-=======
-Instrument.OHM("OHMF","100 KOHM")
->>>>>>> a948caf524d1a6c2485b6ba3ba74089e62ed8728
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -268,11 +243,7 @@ MEASUREMENT_RANGE    = 0.001
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
                     "MEASUREMENT_RANGE" : MEASUREMENT_RANGE}
 # Sending configuration to instrument
-<<<<<<< HEAD
 Instrument.DCI("1 m")
-=======
-Instrument.DCI("1 mA")
->>>>>>> a948caf524d1a6c2485b6ba3ba74089e62ed8728
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -342,22 +313,5 @@ TEST.test_configuration(ConfigParameters)
 
 
 
-<<<<<<< HEAD
-=======
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> a948caf524d1a6c2485b6ba3ba74089e62ed8728
 #if __name__ == '__main__':
 #    unittest.main()
