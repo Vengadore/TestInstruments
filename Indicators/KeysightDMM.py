@@ -77,14 +77,18 @@ class Keysight_3458A:
         return 0 
     ## Traduccion prefijos
     def convertion(self,valor):
-        Prefijos = {"KOHM":1E3,"MOHM":1E6,"GOHM":1E9,"mV":1E-3,"mA":1E-3,"uA":1E-6,"nA":1E-9,"V":1E0,"A":1E0,"OHM":1E0}
-        print(valor.split(" "))
-        val,pref = valor.split(" ")
-        val = int(val) * Prefijos[pref]
-        return val
+        Prefijos = {"K":1E3,"M":1E6,"G":1E9,"m":1E-3,"uA":1E-6,"nA":1E-9,"V":1E0,"A":1E0,"OHM":1E0}
+        if isinstance(valor, str)==True:
+            print(valor.split(" "))
+            val,pref = valor.split(" ")
+            val = int(val) * Prefijos[pref]
+            return val
+        elif isinstance(valor, float)==True or isinstance(valor, int) :
+            val1 = valor
+            return val1
 
     ## DC
-    def DCV(self,alcanceDCV : str = "100 mV"):
+    def DCV(self,alcanceDCV : str = "100 m"):
         if not self.SIM:
             ranges=self.convertion(alcanceDCV)
             self.inst.write(f"FUNC DCV {ranges}")
@@ -92,7 +96,7 @@ class Keysight_3458A:
             self.SET_NPLC(100)
         return 0
     ## ACVSYNC
-    def ACVSYNC(self,alcanceACVSYNC : str = "10 mV"):
+    def ACVSYNC(self,alcanceACVSYNC : str = "10 m"):
         if not self.SIM:
             ranges=self.convertion(alcanceACVSYNC)
             self.inst.write(f"ACV {ranges}")
@@ -134,7 +138,7 @@ class Keysight_3458A:
             self.SET_NPLC(100)
         return 0
     ## FREQ
-    def FREQ(self,FSOURCE,resolutionFREQPER: float=0.00001,alcanceACVorACI: str = "100 mV"):
+    def FREQ(self,FSOURCE,resolutionFREQPER: float=0.00001,alcanceACVorACI: str = "100 m"):
             ranges=self.convertion(alcanceACVorACI) 
             if FSOURCE == "ACV":         
                 self.inst.write("FSOURCE ACV")
@@ -144,7 +148,7 @@ class Keysight_3458A:
                 self.inst.write(f"FUNC FREQ {ranges},{resolutionFREQPER}")  
             return 0  
     ## PER
-    def PER(self,FSOURCE,resolutionFREQPER,alcanceACVorACI: str = "100 mV"):
+    def PER(self,FSOURCE,resolutionFREQPER,alcanceACVorACI: str = "100 m"):
         if not self.SIM:
             ranges=self.convertion(alcanceACVorACI)
             if FSOURCE == "ACV":
