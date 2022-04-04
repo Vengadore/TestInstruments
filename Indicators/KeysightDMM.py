@@ -86,7 +86,7 @@ class Keysight_3458A:
         elif isinstance(valor, float)==True or isinstance(valor, int) :
             val1 = valor
             return val1
-
+            
     ## DC
     def DCV(self,alcanceDCV : str = "100 m"):
         if not self.SIM:
