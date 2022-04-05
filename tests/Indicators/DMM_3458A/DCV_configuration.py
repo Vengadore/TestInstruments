@@ -102,10 +102,10 @@ TEST.test_configuration(ConfigParameters)
 ###################
 ##### TEST 00b ####
 ###################
-# Configuration: DCV @ 10 V, NPLC=0.1
+# Configuration: DCV @ 10 V, NPLC=1
 MEASUREMENT_FUNCTION = "DCV"
 MEASUREMENT_RANGE    = 10
-NPLC                 = 100
+NPLC                 = 1
 NDIG                 = 8
 ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
                     "MEASUREMENT_RANGE" : MEASUREMENT_RANGE,
@@ -113,7 +113,7 @@ ConfigParameters = {"MEASUREMENT_FUNCTION":MEASUREMENT_FUNCTION,
                     "NDIG":NDIG}
 # Sending configuration to instrument
 Instrument.DCV(MEASUREMENT_RANGE)
-Instrument.SET_NPLC(100)
+Instrument.SET_NPLC(1)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
