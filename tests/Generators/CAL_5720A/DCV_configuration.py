@@ -44,7 +44,7 @@ class ConfigurationTest(unittest.TestCase):
         return 0
 
     def Amplitude_P(self,expected:float):
-        actual_primary_amplitude = self.FUNCTION[int(self.device.inst.query("OUT?").split(",")[0])]
+        actual_primary_amplitude = self.device.inst.query("OUT?").split(",")[0]
         actual_primary_amplitude = float(actual_primary_amplitude)
         self.assertEqual(expected,actual_primary_amplitude,"Error in PRIMARY AMPLITUDE configuration")
         return 0
