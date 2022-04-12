@@ -115,7 +115,7 @@ class Fluke_5720A:
 
 if __name__ == "__main__":
     Instrument = Fluke_5720A()
-    Instrument.log = False 
+    Instrument.log = False
 
     # Set output
     Instrument("OUT 1 V, 50 HZ")
