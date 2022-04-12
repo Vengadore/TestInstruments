@@ -32,29 +32,13 @@ class Fluke_5720A:
         self.unit = cmd.split(" ")[2]
         # Mandar el comando por visa
         if not self.SIM:
-            self.send_visa_cmd(f"{self.x} {self.unit}")
+            self.send_visa_cmd(f"OUT {self.x} {self.unit}")
 
     def set_frequency(self,cmd):
         self.frequency = cmd.split(" ")[0]
         # Mandar el comando por visa
         if not self.SIM:
-            self.send_visa_cmd(f"{self.frequency} HZ")
-
-    def init_visa_connection(self):
-        rm = pyvisa.ResourceManager()
-        self.inst = rm.open_resource(self.bus)
-        return 1
-
-    def send_visa_cmd(self,cmd):
-        self.inst.write(cmd)
-        self.inst.write("*WAI")
-        return 1
-
-    def set_frequency(self,cmd):
-        self.frequency = cmd.split(" ")[0]
-        # Mandar el comando por visa
-        if not self.SIM:
-            self.send_visa_cmd(f"{self.frequency} HZ")
+            self.send_visa_cmd(f"OUT {self.frequency} HZ")
 
     def init_visa_connection(self):
         rm = pyvisa.ResourceManager()
@@ -141,3 +125,4 @@ if __name__ == "__main__":
     print(Instrument.read())
     Instrument("stby")
     print(f"Tipo {type(Instrument)}")
+
