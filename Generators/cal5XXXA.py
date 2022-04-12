@@ -125,3 +125,4 @@ if __name__ == "__main__":
     print(Instrument.read())
     Instrument("stby")
     print(f"Tipo {type(Instrument)}")
+
