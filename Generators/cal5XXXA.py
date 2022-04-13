@@ -112,6 +112,100 @@ class Fluke_5720A:
         else:
             return (np.float64(0),"V",np.float64(0),"HZ")
 
+class FLUKE_5500A:
+
+    def __init__(self, bus_connection:str = "GPIB0",simulation = True):
+        self.name = "FLUKE 5500A"
+
+    compensation = {0:"None", 2:"WIRE2", 4:"WIRE4"} 
+    def convertion(valor): 
+        Prefijos = {"K":1E3,"M":1E6,"G":1E9,"m":1E-3,"uA":1E-6,"nA":1E-9,"V":1E0,"A":1E0,"OHM":1E0, "mV":1E-3, "mA":1E-3, "mF":1E-3, "uF":1E-6, "nF":1E-9, "pF":1E-12}
+        if isinstance(valor, str):
+            print(valor.split(" "))
+            val,pref = valor.split(" ")
+            val = int(val) * Prefijos[pref]
+            return val
+        elif isinstance(valor, float) or isinstance(valor, int) :
+            val1 = valor
+            return val1
+    
+    def set_DCV(self,amplitud_ch1,amplitud_ch2 = None):
+        cha1 = self.convertion(amplitud_ch1)
+        if amplitud_ch2 == None:
+            self.send_visa_cmd(f"OUT {cha1} V")
+        else:
+            cha2 = self.convertion(amplitud_ch2)
+            self.send_visa_cmd(f"OUT {cha1} V, {cha2} V")   
+        return 0 
+
+    def set_ACV(self,amplitud_ch1,frequencia,amplitud_ch2 = None)
+        cha1 = self.convertion(amplitud_ch1)
+        if amplitud_ch2 == None:
+            self.send_visa_cmd(f"OUT {cha1} V, {frequencia} HZ")
+        else:
+            cha2 = self.convertion(amplitud_ch2)
+            self.send_visa_cmd(f"OUT {cha1} V, {cha2} V,{frequencia} HZ")
+        return 0
+
+    def set_DCI(self,amplitud):
+        amp = self.convertion(amplitud)
+        self.send_visa_cmd(f"OUT {amp} A")   
+        return 0
+
+    def set_ACI(self,amplitud,frequencia):
+        amp = self.convertion(amplitud)
+        self.send_visa_cmd(f"OUT {amp} A, {frequencia} HZ") 
+        return 0
+
+    def set_OHM(self,amplitud,compensation = 0):
+        amp = self.convertion(amplitud)
+        if compensation == 2:
+            self.send_visa_cmd(f"OUT {amp} OHM")
+            self.send_visa_cmd(f"ZCOMP {self.compensation[compensation]}")
+        elif compensation == 4:
+            self.send_visa_cmd(f"OUT {amp} OHM")
+            self.send_visa_cmd(f"ZCOMP {self.compensation[compensation]}")
+        else:
+            self.send_visa_cmd(f"OUT {amp} OHM")
+        return 0 
+
+    def set_CAP(self,amplitud,compensation = 0):
+        amp = self.convertion(amplitud)
+        if compensation == 2:
+            self.send_visa_cmd(f"OUT {amp} F")
+            self.send_visa_cmd(f"ZCOMP {self.compensation[compensation]}")
+        elif compensation == 4:
+            self.send_visa_cmd(f"OUT {amp} F")
+            self.send_visa_cmd(f"ZCOMP {self.compensation[compensation]}")
+        else:
+            self.send_visa_cmd(f"OUT {amp} F")
+        return 0 
+
+    def set_RTD(self,amplitud,tipo = "PT385", compensation = 0):
+        self.send_visa_cmd(f"TSENS_TYPE RTD")
+        self.send_visa_cmd(f"RTD_TYPE {tipo}")
+        if compensation == 2:
+            self.send_visa_cmd(f"OUT {amplitud} CEL")
+            self.send_visa_cmd(f"ZCOMP {self.compensation[compensation]}")
+        elif compensation == 4:
+            self.send_visa_cmd(f"OUT {amplitud} CEL")
+            self.send_visa_cmd(f"ZCOMP {self.compensation[compensation]}")
+        else:
+            self.send_visa_cmd(f"OUT {amplitud} CEL")
+        return 0 
+
+    def set_TC(self,amplitud,tipo):
+        self.send_visa_cmd(f"TSENS_TYPE TC")
+        self.send_visa_cmd(f"TC_TYPE {tipo}")
+        self.send_visa_cmd(f"OUT {amplitud} CEL")
+        return 0 
+
+    def set_TCMEAS(self,tipo):
+        self.send_visa_cmd(f"TC_MEAS")
+        self.send_visa_cmd(f"TC_TYPE {tipo}")
+
+    
+
 
 if __name__ == "__main__":
     Instrument = Fluke_5720A()
