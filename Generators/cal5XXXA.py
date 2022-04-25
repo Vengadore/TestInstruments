@@ -117,6 +117,7 @@ class FLUKE_5500A:
     def __init__(self, bus_connection:str = "GPIB0",simulation = True):
         self.name = "FLUKE 5500A"
         self.bus = bus_connection
+        self.SIM = simulation
         if not self.SIM:
             self.init_visa_connection()
 
