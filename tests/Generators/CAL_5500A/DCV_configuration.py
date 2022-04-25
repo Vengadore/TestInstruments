@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.append("../../../Generators")
-from cal5XXXA import Fluke_5720A 
+from cal5XXXA import FLUKE_5500A 
 
 ## Test parameters
 SIMULATION = False
@@ -26,10 +26,10 @@ class ConfigurationTest(unittest.TestCase):
 #   FREQUENCY               
 
     def test_configuration(self,configuration:dict):
-        map_tests = {"AMPLITUDE_P":self.Amplitude_P,
-                     "MAGNITUDE_GENERATED_P":self.Magnitude_P,
-                     "RANGE":self.Range_P,
-                     "FREQUENCY":self.Frequency}
+        map_tests = {"AMPLITUDE_P1":self.Amplitude_P1,
+                     "AMPLITUDE_P2":self.Amplitude_P2,
+                     "FREQUENCY":self.Frequency,
+                     "ZCOMP":self.Zcomp}
         # Configurations to tests
         AvailableConfigurations = [key for key in configuration.keys() if key in map_tests.keys()] # Only tests in the map_tests will be tested
         SkippedTests = [key for key in configuration.keys() if key not in map_tests.keys()]        # If the test is not int map_tests it is skipped
@@ -43,20 +43,16 @@ class ConfigurationTest(unittest.TestCase):
             test_function(expectedValue)
         return 0
 
-    def Amplitude_P(self,expected:float):
+    def Amplitude_P1(self,expected:float):
         actual_primary_amplitude = self.device.inst.query("OUT?").split(",")[0]
         actual_primary_amplitude = float(actual_primary_amplitude)
         self.assertEqual(expected,actual_primary_amplitude,"Error in PRIMARY AMPLITUDE configuration")
         return 0
-    
-    def Magnitude_P(self,expected:str):
-        actual_primary_magnitude = self.device.inst.query("OUT?").split(",")[1]
-        self.assertEqual(expected,actual_primary_magnitude,"Error in PRIMARY MAGNITUDE configuration")
-        return 0
 
-    def Range_P(self,expected:str):
-        actual_Range = self.device.inst.query("RANGE?").split(",")[0]
-        self.assertEqual(expected,actual_Range,"Error in RANGE configuration")
+    def Amplitude_P2(self,expected:float):
+        actual_second_amplitude = self.device.inst.query("OUT?").split(",")[2]
+        actual_second_amplitude = float(actual_second_amplitude)
+        self.assertEqual(expected,actual_second_amplitude,"Error in SECOND AMPLITUDE configuration")
         return 0
     
     def Frequency(self,expected:float):
@@ -64,8 +60,14 @@ class ConfigurationTest(unittest.TestCase):
         self.assertEqual(expected,actual_Frequency,"Error in FREQUENCY configuration")
         return 0
 
+    def Zcomp(self,expected:float):
+        actual_Zcomp = float(self.device.inst.query("OUT?").split(',')[-1].replace("\n",""))
+        self.assertEqual(expected,actual_Zcomp,"Error in ZCOMP configuration")
+        return 0
+
+
 ## Start Multimeter and test enviroment
-Instrument = Fluke_5720A(bus_connection='GPIB0::4::INSTR',simulation=SIMULATION)
+Instrument = FLUKE_5500A(bus_connection='GPIB0::4::INSTR',simulation=SIMULATION)
 TEST = ConfigurationTest()
 # Assign device to TEST
 TEST.device = Instrument
@@ -76,323 +78,318 @@ TEST.device = Instrument
 
 ###################
 ##### TEST 00 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 100 mV, 7 V @ 0 HZ
+AMPLITUDE_P1             = 0.1
+AMPLITUDE_P2             = 7
+ConfigParameters = {"AMPLITUDE_P1"           :AMPLITUDE_P1,
+                    "AMPLITUDE_P2"           :AMPLITUDE_P2} 
 
-# Configuration: 1 V @ 0 HZ
-AMPLITUDE_P             = 1
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 0
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
-# Sending configuration to instrument
-# SET debe ser una función que reciba un parametro flotante llamado amplitud, un parametro en forma de cadena
-# llamado magnitud, y un parametro en forma de flotante llamado frecuencia.
-# SET debe ser capaz de setear el calibrador a la magnitud que se indique y frecuencia debe tener un valor por 
-# default de None, lo que indicará que no se mandará el parametro de frecuencia.
-# Instrument.SET(10,"V",frecuencia = None)
-Instrument("OUT 1 V, 0 HZ")
+Instrument.set_DCV(AMPLITUDE_P1,AMPLITUDE_P2)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 01 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
-
-# Configuration: 10 V @ 0 HZ
-AMPLITUDE_P             = 10
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 0
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
-
-Instrument("OUT 10 V, 0 HZ")
+# Configuration: 1 V, 0 V @ 0 HZ
+AMPLITUDE_P1             = 1
+AMPLITUDE_P2             = 0
+ConfigParameters = {"AMPLITUDE_P1"           :AMPLITUDE_P1} 
+                    
+Instrument.set_DCV(AMPLITUDE_P1)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 02 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 100 V, 1 V @ 0 HZ
+AMPLITUDE_P1             = 100
+AMPLITUDE_P2             = 1
+ConfigParameters = {"AMPLITUDE_P1"           :AMPLITUDE_P1,
+                    "AMPLITUDE_P2"           :AMPLITUDE_P2} 
 
-# Configuration: 100 V @ 0 HZ
-AMPLITUDE_P             = 100
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 0
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
-
-Instrument("OUT 100 V, 0 HZ")
+Instrument.set_DCV(AMPLITUDE_P1,AMPLITUDE_P2)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 03 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 100 mV, 1 V @ 60 HZ
+AMPLITUDE_P1     = 0.1
+AMPLITUDE_P2     = 1
+FREQUENCY        = 60
 
-# Configuration: 100 V @ 0 HZ
-AMPLITUDE_P             = 1000
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 0
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY, 
+                    "AMPLITUDE_P2"    :AMPLITUDE_P2}
 
-Instrument("OUT 1000 V, 0 HZ")
+Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY,AMPLITUDE_P2)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 04 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 100 V @ 60 HZ
+AMPLITUDE_P1     = 10
+AMPLITUDE_P2     = 1
+FREQUENCY        = 60
 
-# Configuration: 1 V @ 50 HZ
-AMPLITUDE_P             = 1
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 50
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY}
 
-Instrument("OUT 1 V, 50 HZ")
+Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 05 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 100 V, 7 V @ 60 HZ
+AMPLITUDE_P1     = 100
+AMPLITUDE_P2     = 5
+FREQUENCY        = 60
 
-# Configuration: 10 V @ 50 HZ
-AMPLITUDE_P             = 10
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 50
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY, 
+                    "AMPLITUDE_P2"    :AMPLITUDE_P2}
 
-Instrument("OUT 10 V, 50 HZ")
+Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY,AMPLITUDE_P2)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 06 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 100 mV, 1 V @ 1000 HZ
+AMPLITUDE_P1     = 0.1
+AMPLITUDE_P2     = 1
+FREQUENCY        = 1000
 
-# Configuration: 100 V @ 50 HZ
-AMPLITUDE_P             = 100 
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 50
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY, 
+                    "AMPLITUDE_P2"    :AMPLITUDE_P2}
 
-Instrument("OUT 100 V, 50 HZ")
+Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY,AMPLITUDE_P2)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 07 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 10 V @ 1000 HZ
+AMPLITUDE_P1     = 10
+AMPLITUDE_P2     = 1
+FREQUENCY        = 1000
 
-# Configuration: 700 V @ 50 HZ
-AMPLITUDE_P             = 700
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 50
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY}
 
-Instrument("OUT 700 V, 50 HZ")
+Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 08 #####
+###################  
+
+# Configuration: 100 V, 5 V @ 1000 HZ
+AMPLITUDE_P1     = 100
+AMPLITUDE_P2     = 5
+FREQUENCY        = 1000
+
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY, 
+                    "AMPLITUDE_P2"    :AMPLITUDE_P2}
+
+Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY,AMPLITUDE_P2)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
 ###################
+##### TEST 08 #####
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 100 V, 5 V @ 1000 HZ
+AMPLITUDE_P1     = 100
+AMPLITUDE_P2     = 5
+FREQUENCY        = 1000
 
-# Configuration: 1 V @ 1000 HZ
-AMPLITUDE_P             = 1
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 1000
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY, 
+                    "AMPLITUDE_P2"    :AMPLITUDE_P2}
 
-Instrument("OUT 1 V, 1000 HZ")
+Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY,AMPLITUDE_P2)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 09 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 0.1 mA @ 0 HZ
+AMPLITUDE_P1     = 0.1
 
-# Configuration: 10 V @ 1000 HZ
-AMPLITUDE_P             = 10
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 1000
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1}
 
-Instrument("OUT 10 V, 1000 HZ")
+Instrument.set_DCI(AMPLITUDE_P1)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 10 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 1 A @ 0 HZ
+AMPLITUDE_P1     = 1
 
-# Configuration: 100 V @ 50 HZ
-AMPLITUDE_P             = 100 
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 1000
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1}
 
-Instrument("OUT 100 V, 1000 HZ")
+Instrument.set_DCI(AMPLITUDE_P1)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 11 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 10 A @ 0 HZ
+AMPLITUDE_P1     = 10
 
-# Configuration: 700 V @ 1000 HZ
-AMPLITUDE_P             = 700
-MAGNITUDE_GENERATED_P   = "V" 
-FREQUENCY               = 1000
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1}
 
-Instrument("OUT 700 V, 1000 HZ")
+Instrument.set_DCI(AMPLITUDE_P1)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 12 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 0.1 mA @ 60 HZ
+AMPLITUDE_P1     = 0.1
+FREQUENCY        = 60
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY}
 
-# Configuration: 1 A @ 0 HZ
-AMPLITUDE_P             = 1
-MAGNITUDE_GENERATED_P   = "A" 
-FREQUENCY               = 0
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
-
-Instrument("OUT 1 A, 0 HZ")
+Instrument.set_ACI(AMPLITUDE_P1,FREQUENCY)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 13 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 1 A @ 0 HZ
+AMPLITUDE_P1     = 1
+FREQUENCY        = 60
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY}
 
-# Configuration: 1 A @ 50 HZ
-AMPLITUDE_P             = 1
-MAGNITUDE_GENERATED_P   = "A" 
-FREQUENCY               = 50
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
-
-Instrument("OUT 1 A, 50 HZ")
+Instrument.set_ACI(AMPLITUDE_P1,FREQUENCY)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
 ###################
 ##### TEST 14 #####
-###################
+###################  
 
-#   AMPLITUDE_P     
-#   MAGNITUDE_GENERATED_P        
-#   RANGE_P
-#   FREQUENCY     
+# Configuration: 10 A @ 0 HZ
+AMPLITUDE_P1     = 10
+FREQUENCY        = 60
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
+                    "FREQUENCY"       :FREQUENCY}
 
-# Configuration: 10 OHM
-AMPLITUDE_P             = 10
-MAGNITUDE_GENERATED_P   = "OHM" 
-FREQUENCY               = 0
-ConfigParameters = {"AMPLITUDE_P"           :AMPLITUDE_P,
-                    "MAGNITUDE_GENERATED_P" :MAGNITUDE_GENERATED_P,
-                    "FREQUENCY"             :FREQUENCY}
-
-Instrument("OUT 10 OHM")
+Instrument.set_ACI(AMPLITUDE_P1,FREQUENCY)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
-#if __name__ == '__main__':
-#    unittest.main()
+###################
+##### TEST 15 #####
+###################  
+
+# Configuration: 10 OHM 
+AMPLITUDE_P1     = 10
+ZCOMP            = 0
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+
+Instrument.set_OHM(AMPLITUDE_P1)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 16 #####
+###################  
+
+# Configuration: 100 OHM
+AMPLITUDE_P1     = 100
+ZCOMP            = 4
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+
+Instrument.set_OHM(AMPLITUDE_P1)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 17 #####
+###################  
+
+# Configuration: 100 OHM
+AMPLITUDE_P1     = 15
+ZCOMP            = 2
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+
+Instrument.set_OHM(AMPLITUDE_P1)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 18 #####
+###################  
+
+# Configuration: 1 uF
+AMPLITUDE_P1     =  0.00000001
+ZCOMP            = 2
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+
+Instrument.set_CAP(AMPLITUDE_P1)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 19 #####
+###################  
+
+# Configuration: 1 uF
+AMPLITUDE_P1     =  0.000001
+ZCOMP            = 2
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+
+Instrument.set_CAP(AMPLITUDE_P1)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 20 #####
+###################  
+
+# Configuration: 1 uF
+AMPLITUDE_P1     =  0.0001
+ZCOMP            = 2
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+
+Instrument.set_CAP(AMPLITUDE_P1)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
