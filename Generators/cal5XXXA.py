@@ -118,6 +118,7 @@ class FLUKE_5500A:
         self.name = "FLUKE 5500A"
         self.bus = bus_connection
         self.SIM = simulation
+        self.compensation = {0:"None", 2:"WIRE2", 4:"WIRE4"}
         if not self.SIM:
             self.init_visa_connection()
 
@@ -129,10 +130,9 @@ class FLUKE_5500A:
     def send_visa_cmd(self,cmd):
         self.inst.write(cmd)
         self.inst.write("*WAI")
-        return 1
-
-    compensation = {0:"None", 2:"WIRE2", 4:"WIRE4"} 
+        return 1 
     
+
     def convertion(self,valor): 
         Prefijos = {"K":1E3,"M":1E6,"G":1E9,"m":1E-3,"uA":1E-6,"nA":1E-9,"V":1E0,"A":1E0,"OHM":1E0, "mV":1E-3, "mA":1E-3, "mF":1E-3, "uF":1E-6, "nF":1E-9, "pF":1E-12}
         if isinstance(valor, str):
@@ -150,7 +150,7 @@ class FLUKE_5500A:
             self.send_visa_cmd(f"OUT {cha1} V, 0 HZ")
         else:
             cha2 = self.convertion(amplitud_ch2)
-            self.send_visa_cmd(f"OUT {cha1} V, {cha2} V, 0 HZ")   
+            self.send_visa_cmd(f"OUT {cha1} V, {cha2} V, 0 HZ")
         return 0 
 
     def set_ACV(self,amplitud_ch1,frequencia,amplitud_ch2 = None):
