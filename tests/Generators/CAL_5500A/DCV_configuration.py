@@ -29,7 +29,9 @@ class ConfigurationTest(unittest.TestCase):
         map_tests = {"AMPLITUDE_P1":self.Amplitude_P1,
                      "AMPLITUDE_P2":self.Amplitude_P2,
                      "FREQUENCY":self.Frequency,
-                     "ZCOMP":self.Zcomp}
+                     "ZCOMP":self.Zcomp,
+                     "RTD_TYPE":self.RTD_Type,
+                     "TC_TYPE":self.TC_Type}
         # Configurations to tests
         AvailableConfigurations = [key for key in configuration.keys() if key in map_tests.keys()] # Only tests in the map_tests will be tested
         SkippedTests = [key for key in configuration.keys() if key not in map_tests.keys()]        # If the test is not int map_tests it is skipped
@@ -60,9 +62,25 @@ class ConfigurationTest(unittest.TestCase):
         self.assertEqual(expected,actual_Frequency,"Error in FREQUENCY configuration")
         return 0
 
-    def Zcomp(self,expected:float):
-        actual_Zcomp = float(self.device.inst.query("OUT?").split(',')[-1].replace("\n",""))
+    def Zcomp(self,expected:str):
+        actual_Zcomp = self.device.inst.query("ZCOMP?").split(',')[-1].replace("\n","")
+        if actual_Zcomp == "NONE":
+            actual_Zcomp = 0
+        elif actual_Zcomp == "WIRE2":
+            actual_Zcomp = 2
+        else:
+            actual_Zcomp = 4
         self.assertEqual(expected,actual_Zcomp,"Error in ZCOMP configuration")
+        return 0
+
+    def RTD_Type(self,expected:str):
+        actual_RTD_Type = self.device.inst.query("RTD_TYPE?").split(',')[-1].replace("\n","")
+        self.assertEqual(expected,actual_RTD_Type,"Error in RTD_TYPE configuration")
+        return 0
+
+    def TC_Type(self,expected:str):
+        actual_TC_Type = self.device.inst.query("TC_TYPE?").split(',')[-1].replace("\n","")
+        self.assertEqual(expected,actual_TC_Type,"Error in RTD_TYPE configuration")
         return 0
 
 
@@ -96,7 +114,6 @@ TEST.test_configuration(ConfigParameters)
 
 # Configuration: 1 V, 0 V @ 0 HZ
 AMPLITUDE_P1             = 1
-AMPLITUDE_P2             = 0
 ConfigParameters = {"AMPLITUDE_P1"           :AMPLITUDE_P1} 
                     
 Instrument.set_DCV(AMPLITUDE_P1)
@@ -140,7 +157,6 @@ TEST.test_configuration(ConfigParameters)
 
 # Configuration: 100 V @ 60 HZ
 AMPLITUDE_P1     = 10
-AMPLITUDE_P2     = 1
 FREQUENCY        = 60
 
 ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
@@ -190,30 +206,12 @@ TEST.test_configuration(ConfigParameters)
 
 # Configuration: 10 V @ 1000 HZ
 AMPLITUDE_P1     = 10
-AMPLITUDE_P2     = 1
 FREQUENCY        = 1000
 
 ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
                     "FREQUENCY"       :FREQUENCY}
 
 Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY)
-# Checking for correct configuration
-TEST.test_configuration(ConfigParameters)
-
-###################
-##### TEST 08 #####
-###################  
-
-# Configuration: 100 V, 5 V @ 1000 HZ
-AMPLITUDE_P1     = 100
-AMPLITUDE_P2     = 5
-FREQUENCY        = 1000
-
-ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1,
-                    "FREQUENCY"       :FREQUENCY, 
-                    "AMPLITUDE_P2"    :AMPLITUDE_P2}
-
-Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY,AMPLITUDE_P2)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -319,12 +317,13 @@ TEST.test_configuration(ConfigParameters)
 ##### TEST 15 #####
 ###################  
 
-# Configuration: 10 OHM 
+# Configuration: 10 OHM WIRE2
 AMPLITUDE_P1     = 10
-ZCOMP            = 0
-ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+ZCOMP            = 2
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "ZCOMP"        :ZCOMP}
 
-Instrument.set_OHM(AMPLITUDE_P1)
+Instrument.set_OHM(AMPLITUDE_P1,ZCOMP)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -332,12 +331,13 @@ TEST.test_configuration(ConfigParameters)
 ##### TEST 16 #####
 ###################  
 
-# Configuration: 100 OHM
+# Configuration: 100 OHM WIRE4
 AMPLITUDE_P1     = 100
 ZCOMP            = 4
-ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "ZCOMP"        :ZCOMP}
 
-Instrument.set_OHM(AMPLITUDE_P1)
+Instrument.set_OHM(AMPLITUDE_P1,ZCOMP)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -345,12 +345,13 @@ TEST.test_configuration(ConfigParameters)
 ##### TEST 17 #####
 ###################  
 
-# Configuration: 100 OHM
+# Configuration: 100 OHM NONE
 AMPLITUDE_P1     = 15
-ZCOMP            = 2
-ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+ZCOMP            = 0
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "ZCOMP"        :ZCOMP}
 
-Instrument.set_OHM(AMPLITUDE_P1)
+Instrument.set_OHM(AMPLITUDE_P1,ZCOMP)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -358,12 +359,13 @@ TEST.test_configuration(ConfigParameters)
 ##### TEST 18 #####
 ###################  
 
-# Configuration: 1 uF
-AMPLITUDE_P1     =  0.00000001
-ZCOMP            = 2
-ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+# Configuration: 100 nF
+AMPLITUDE_P1     =  0.0000001
+ZCOMP            =  0
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "ZCOMP"        :ZCOMP}
 
-Instrument.set_CAP(AMPLITUDE_P1)
+Instrument.set_CAP(AMPLITUDE_P1,ZCOMP)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -371,12 +373,27 @@ TEST.test_configuration(ConfigParameters)
 ##### TEST 19 #####
 ###################  
 
-# Configuration: 1 uF
-AMPLITUDE_P1     =  0.000001
-ZCOMP            = 2
-ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+# Configuration: 100 uF
+AMPLITUDE_P1     =  0.0001
+ZCOMP            =  0
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "ZCOMP"        :ZCOMP}
 
-Instrument.set_CAP(AMPLITUDE_P1)
+Instrument.set_CAP(AMPLITUDE_P1,ZCOMP)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 19 #####
+###################  
+
+# Configuration: 100 mF
+AMPLITUDE_P1     =  0.1
+ZCOMP            =  2
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "ZCOMP"        :ZCOMP}
+
+Instrument.set_CAP(AMPLITUDE_P1,ZCOMP)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
 
@@ -384,12 +401,140 @@ TEST.test_configuration(ConfigParameters)
 ##### TEST 20 #####
 ###################  
 
-# Configuration: 1 uF
-AMPLITUDE_P1     =  0.0001
+# Configuration: 100 °C WIRE2 RTD PT385_200
+AMPLITUDE_P1     = 100
 ZCOMP            = 2
-ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1}
+RTD_TYPE         = "PT385_200"
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "ZCOMP"        :ZCOMP,
+                    "RTD_TYPE"     :RTD_TYPE}
 
-Instrument.set_CAP(AMPLITUDE_P1)
+Instrument.set_RTD(AMPLITUDE_P1,RTD_TYPE,ZCOMP)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 21 #####
+###################  
+
+# Configuration: 100 °C WIRE4 RTD PT3916
+AMPLITUDE_P1     = 100
+ZCOMP            = 4
+RTD_TYPE         = "PT3916"
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "ZCOMP"        :ZCOMP,
+                    "RTD_TYPE"     :RTD_TYPE}
+
+Instrument.set_RTD(AMPLITUDE_P1,RTD_TYPE,ZCOMP)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 22 #####
+###################  
+
+# Configuration: 100 °C NONE RTD CU10
+AMPLITUDE_P1     = 100
+ZCOMP            = 0
+RTD_TYPE         = "CU10"
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "ZCOMP"        :ZCOMP,
+                    "RTD_TYPE"     :RTD_TYPE}
+
+Instrument.set_RTD(AMPLITUDE_P1,RTD_TYPE,ZCOMP)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 23 #####
+###################  
+
+# Configuration: 500 °C TC K
+AMPLITUDE_P1     = 500
+TC_TYPE         = "K"
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "TC_TYPE"      :TC_TYPE}
+
+Instrument.set_TC(AMPLITUDE_P1,TC_TYPE)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 24 #####
+###################  
+
+# Configuration: 100 °C TC R
+AMPLITUDE_P1     = 100
+TC_TYPE         = "R"
+ConfigParameters = {"AMPLITUDE_P1" :AMPLITUDE_P1,
+                    "TC_TYPE"      :TC_TYPE}
+
+Instrument.set_TC(AMPLITUDE_P1,TC_TYPE)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+
+###################
+##### TEST 26 #####
+###################  
+
+# Configuration: 1 V, 1 A @ 0 HZ
+AMPLITUDE_P1             = 1
+AMPLITUDE_P2             = 1
+ConfigParameters = {"AMPLITUDE_P1"           :AMPLITUDE_P1,
+                    "AMPLITUDE_P2"           :AMPLITUDE_P2} 
+
+Instrument.set_POWER_DC(AMPLITUDE_P1,AMPLITUDE_P2)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 27 #####
+###################  
+
+# Configuration: 100 V, 0.1 A @ 0 HZ
+AMPLITUDE_P1             = 100
+AMPLITUDE_P2             = 0.1
+ConfigParameters = {"AMPLITUDE_P1"           :AMPLITUDE_P1,
+                    "AMPLITUDE_P2"           :AMPLITUDE_P2} 
+
+Instrument.set_POWER_DC(AMPLITUDE_P1,AMPLITUDE_P2)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 28 #####
+###################  
+
+# Configuration: 1 V, 1 A @ 60 HZ
+AMPLITUDE_P1     = 1
+AMPLITUDE_P2     = 1
+FREQUENCY        = 60
+
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1, 
+                    "AMPLITUDE_P2"    :AMPLITUDE_P2,
+                    "FREQUENCY"       :FREQUENCY}
+
+Instrument.set_POWER_AC(AMPLITUDE_P1,AMPLITUDE_P2,FREQUENCY)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 29 #####
+###################  
+
+# Configuration: 100 V, 1 A @ 60 HZ
+AMPLITUDE_P1             = 100
+AMPLITUDE_P2             = 1
+FREQUENCY                = 60
+
+ConfigParameters = {"AMPLITUDE_P1"    :AMPLITUDE_P1, 
+                    "AMPLITUDE_P2"    :AMPLITUDE_P2,
+                    "FREQUENCY"       :FREQUENCY}
+
+Instrument.set_POWER_AC(AMPLITUDE_P1,AMPLITUDE_P2,FREQUENCY)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+
 
