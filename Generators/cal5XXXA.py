@@ -125,6 +125,7 @@ class FLUKE_5500A:
     def init_visa_connection(self):
         rm = pyvisa.ResourceManager()
         self.inst = rm.open_resource(self.bus)
+        self.inst.timeout = 5000
         return 1
 
     def send_visa_cmd(self,cmd):
@@ -218,6 +219,7 @@ class FLUKE_5500A:
     def set_TCMEAS(self,tipo):
         self.send_visa_cmd(f"TC_MEAS")
         self.send_visa_cmd(f"TC_TYPE {tipo}")
+        return 0
 
     def set_POWER_DC(self,amplitud_VCC,amplitud_ICC):
          aVCC= self.convertion(amplitud_VCC)
