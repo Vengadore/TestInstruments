@@ -17,7 +17,7 @@ class ConfigurationTest(unittest.TestCase):
     ## Constats for test
     FUNCTION = {'DCV':"DCV",'ACV':"ACV",'DCI':"DCI",'ACI':"ACI",
                 'RES':"RES",'CAP':"CAP",'RTD':"RTD",'TC_OUT':"TC_OUT",
-                'DC_POWER':"DC_POWER",'AC_POWER':"AC_POWER",'DCV_DCV':"DCV_DCV",'ACV_ACV':"ACV_ACV"}
+                'DC_POWER':"DC_POWER",'AC_POWER':"AC_POWER",'DCV_DCV':"DCV_DCV",'ACV_ACV':"ACV_ACV",'TC_MEAS':"TC_MEAS"}
 
     ## Available tests
 #   AMPLITUDE_P     
@@ -603,6 +603,35 @@ ConfigParameters = {"AMPLITUDE_P1"      :AMPLITUDE_P1,
 Instrument.set_POWER_AC(AMPLITUDE_P1,AMPLITUDE_P2,FREQUENCY)
 # Checking for correct configuration
 TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 30 #####
+###################  
+
+# Configuration: TC R
+GENERATE_FUNCTION  = "TC_MEAS"
+TC_TYPE            = "R"
+ConfigParameters = {"GENERATE_FUNCTION" :GENERATE_FUNCTION,
+                    "TC_TYPE"           :TC_TYPE}
+
+Instrument.set_TCMEAS(TC_TYPE)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
+###################
+##### TEST 31 #####
+###################  
+
+# Configuration: TC T
+GENERATE_FUNCTION  = "TC_MEAS"
+TC_TYPE            = "T"
+ConfigParameters = {"GENERATE_FUNCTION" :GENERATE_FUNCTION,
+                    "TC_TYPE"           :TC_TYPE}
+
+Instrument.set_TCMEAS(TC_TYPE)
+# Checking for correct configuration
+TEST.test_configuration(ConfigParameters)
+
 
 
 
