@@ -610,9 +610,7 @@ TEST.test_configuration(ConfigParameters)
 
 # Configuration: TC R
 GENERATE_FUNCTION  = "TC_MEAS"
-TC_TYPE            = "R"
-ConfigParameters = {"GENERATE_FUNCTION" :GENERATE_FUNCTION,
-                    "TC_TYPE"           :TC_TYPE}
+ConfigParameters = {"GENERATE_FUNCTION" :GENERATE_FUNCTION}
 
 Instrument.set_TCMEAS(TC_TYPE)
 # Checking for correct configuration
@@ -624,9 +622,7 @@ TEST.test_configuration(ConfigParameters)
 
 # Configuration: TC T
 GENERATE_FUNCTION  = "TC_MEAS"
-TC_TYPE            = "T"
-ConfigParameters = {"GENERATE_FUNCTION" :GENERATE_FUNCTION,
-                    "TC_TYPE"           :TC_TYPE}
+ConfigParameters = {"GENERATE_FUNCTION" :GENERATE_FUNCTION}
 
 Instrument.set_TCMEAS(TC_TYPE)
 # Checking for correct configuration
