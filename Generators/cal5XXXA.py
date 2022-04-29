@@ -216,9 +216,8 @@ class FLUKE_5500A:
         self.send_visa_cmd(f"OUT {amplitud} CEL")
         return 0 
 
-    def set_TCMEAS(self,tipo):
+    def set_TCMEAS(self):
         actual_meastc = self.inst.query("*TRG").split(",")[0]
-        self.send_visa_cmd(f"TC_TYPE {tipo}")
         return float(actual_meastc)
 
     def set_POWER_DC(self,amplitud_VCC,amplitud_ICC):
