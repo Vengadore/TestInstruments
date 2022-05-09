@@ -77,13 +77,13 @@ class Keysight_3458A:
         return 0 
     ## Traduccion prefijos
     def convertion(self,valor):
-        Prefijos = {"K":1E3,"M":1E6,"G":1E9,"m":1E-3,"uA":1E-6,"nA":1E-9,"V":1E0,"A":1E0,"OHM":1E0}
-        if isinstance(valor, str)==True:
+        Prefijos = {"K":1E3,"M":1E6,"G":1E9,"m":1E-3,"uA":1E-6,"nA":1E-9,"V":1E0,"A":1E0,"OHM":1E0, "mV":1E-3, "mA":1E-3}
+        if isinstance(valor, str):
             print(valor.split(" "))
             val,pref = valor.split(" ")
             val = int(val) * Prefijos[pref]
             return val
-        elif isinstance(valor, float)==True or isinstance(valor, int) :
+        elif isinstance(valor, float) or isinstance(valor, int) :
             val1 = valor
             return val1
             
