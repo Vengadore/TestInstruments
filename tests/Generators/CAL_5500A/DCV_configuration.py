@@ -48,6 +48,7 @@ class CalibratorConfiguration():
         return TrueParameters
 
     def Generate_Function(self):
+        # Verificacion del instrumento
         ActualFunction = self.FUNCTION[str(self.device.inst.query("FUNC?").split(",")[0]).replace("\n","")]
         return ActualFunction    
 
