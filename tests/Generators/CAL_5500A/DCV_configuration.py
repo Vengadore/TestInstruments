@@ -48,6 +48,7 @@ class CalibratorConfiguration():
         return TrueParameters
 
     def Generate_Function(self):
+
         ActualFunction = self.FUNCTION[str(self.device.inst.query("FUNC?").split(",")[0]).replace("\n","")]
         return ActualFunction    
 
@@ -85,7 +86,9 @@ class CalibratorConfiguration():
 
 
 ## Start Multimeter and test enviroment
+
 Instrument = FLUKE_5500A()
+
 ConfigReader = CalibratorConfiguration()
 # Assign device to TEST
 ConfigReader.device = Instrument
