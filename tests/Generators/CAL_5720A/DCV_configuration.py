@@ -139,7 +139,7 @@ class DC_Tests(unittest.TestCase):
 
     def test_02(self):
         # Configuration: 100 V, 1 V @ 0 HZ
-        GENERATE_FUNCTION        = "DCV_DCV"
+        GENERATE_FUNCTION        = "DCV"
         AMPLITUDE_P1             = 100
         ConfigParameters = {"AMPLITUDE_P1"           :AMPLITUDE_P1,
                             "GENERATE_FUNCTION"      :GENERATE_FUNCTION} 
@@ -189,43 +189,37 @@ class DC_Tests(unittest.TestCase):
     def test_05(self): 
 
         # Configuration: 100 V, 7 V @ 60 HZ
-        GENERATE_FUNCTION  = "ACV_ACV"
+        GENERATE_FUNCTION  = "ACV"
         AMPLITUDE_P1       = 100
-        AMPLITUDE_P2       = 5
         FREQUENCY          = 60
 
         ConfigParameters = {"AMPLITUDE_P1"       :AMPLITUDE_P1,
                             "GENERATE_FUNCTION"  :GENERATE_FUNCTION,
-                            "FREQUENCY"          :FREQUENCY, 
-                            "AMPLITUDE_P2"       :AMPLITUDE_P2}
+                            "FREQUENCY"          :FREQUENCY}
 
-        Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY,AMPLITUDE_P2)
+        Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY)
         # Checking for correct configuration
         TrueParameters = ConfigReader.test_configuration(ConfigParameters)
         self.assertEqual(TrueParameters["AMPLITUDE_P1"]      ,ConfigParameters["AMPLITUDE_P1"])
         self.assertEqual(TrueParameters["GENERATE_FUNCTION"] ,ConfigParameters["GENERATE_FUNCTION"])
-        self.assertEqual(TrueParameters["AMPLITUDE_P2"]      ,ConfigParameters["AMPLITUDE_P2"])
         self.assertEqual(TrueParameters["FREQUENCY"]         ,ConfigParameters["FREQUENCY"])
 
     def test_06(self): 
 
         # Configuration: 100 mV, 1 V @ 1000 HZ
-        GENERATE_FUNCTION  = "ACV_ACV"
+        GENERATE_FUNCTION  = "ACV"
         AMPLITUDE_P1       = 0.1
-        AMPLITUDE_P2       = 1
         FREQUENCY          = 1000
 
         ConfigParameters = {"AMPLITUDE_P1"       :AMPLITUDE_P1,
                             "GENERATE_FUNCTION"  :GENERATE_FUNCTION,
-                            "FREQUENCY"          :FREQUENCY, 
-                            "AMPLITUDE_P2"       :AMPLITUDE_P2}
+                            "FREQUENCY"          :FREQUENCY}
 
-        Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY,AMPLITUDE_P2)
+        Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY)
         # Checking for correct configuration
         TrueParameters = ConfigReader.test_configuration(ConfigParameters)
         self.assertEqual(TrueParameters["AMPLITUDE_P1"]      ,ConfigParameters["AMPLITUDE_P1"])
         self.assertEqual(TrueParameters["GENERATE_FUNCTION"] ,ConfigParameters["GENERATE_FUNCTION"])
-        self.assertEqual(TrueParameters["AMPLITUDE_P2"]      ,ConfigParameters["AMPLITUDE_P2"])
         self.assertEqual(TrueParameters["FREQUENCY"]         ,ConfigParameters["FREQUENCY"])
 
     def test_07(self): 
@@ -249,22 +243,20 @@ class DC_Tests(unittest.TestCase):
     def test_08(self): 
         
         # Configuration: 100 V, 5 V @ 1000 HZ
-        GENERATE_FUNCTION  = "ACV_ACV"
+        GENERATE_FUNCTION  = "ACV"
         AMPLITUDE_P1       = 100
         AMPLITUDE_P2       = 5
         FREQUENCY          = 1000
 
         ConfigParameters = {"AMPLITUDE_P1"       :AMPLITUDE_P1,
                             "GENERATE_FUNCTION"  :GENERATE_FUNCTION,
-                            "FREQUENCY"          :FREQUENCY, 
-                            "AMPLITUDE_P2"       :AMPLITUDE_P2}
+                            "FREQUENCY"          :FREQUENCY}
 
-        Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY,AMPLITUDE_P2)
+        Instrument.set_ACV(AMPLITUDE_P1,FREQUENCY)
         # Checking for correct configuration
         TrueParameters = ConfigReader.test_configuration(ConfigParameters)
         self.assertEqual(TrueParameters["AMPLITUDE_P1"]      ,ConfigParameters["AMPLITUDE_P1"])
         self.assertEqual(TrueParameters["GENERATE_FUNCTION"] ,ConfigParameters["GENERATE_FUNCTION"])
-        self.assertEqual(TrueParameters["AMPLITUDE_P2"]      ,ConfigParameters["AMPLITUDE_P2"])
         self.assertEqual(TrueParameters["FREQUENCY"]         ,ConfigParameters["FREQUENCY"])
 
     def test_09(self): 
@@ -301,7 +293,7 @@ class DC_Tests(unittest.TestCase):
         
         # Configuration: 10 A @ 0 HZ
         GENERATE_FUNCTION  = "DCI"
-        AMPLITUDE_P1       = 10
+        AMPLITUDE_P1       = 2
 
         ConfigParameters = {"AMPLITUDE_P1"      :AMPLITUDE_P1,
                             "GENERATE_FUNCTION" :GENERATE_FUNCTION}
