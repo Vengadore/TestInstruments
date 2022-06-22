@@ -181,7 +181,7 @@ class FLUKE_5720A(FLUKE_5500A):
         return 0 
 
 if __name__ == "__main__":
-    Instrument = Fluke_5720A()
+    Instrument = FLUKE_5720A()
     Instrument.log = False 
 
     # Set output
