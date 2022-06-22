@@ -167,7 +167,7 @@ class Keysight_3458A:
             lectura = float(lectura)
             Samples.append(lectura)
         return Samples
-    def __call__(self, indicator:cal5XXXA.Fluke_5720A) -> str:
+    def __call__(self, indicator:cal5XXXA.FLUKE_5720A) -> str:
         # The basic operation of the multímeter is to performa reading from an external source
         if indicator.__name__ == "generator":
             # simulate wait time
@@ -194,7 +194,7 @@ class Keysight_3458A:
             
 
 if __name__ == "__main__":
-    Instrument = cal5XXXA.Fluke_5720A()
+    Instrument = cal5XXXA.FLUKE_5720A()
     Reader = Keysight_3458A()
     Instrument.log = False
 
