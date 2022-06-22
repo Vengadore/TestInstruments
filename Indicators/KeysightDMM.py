@@ -161,6 +161,7 @@ class Keysight_3458A:
     ## Sample
     def SAMPLE(self,N_samples : int = 1):
         Samples = []
+        self.inst.write("NRDGS 1, AUTO")
         for i in range(N_samples):
             self.inst.write("TRIG SGL")
             lectura = self.inst.read()
