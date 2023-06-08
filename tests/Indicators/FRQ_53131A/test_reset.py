@@ -12,4 +12,5 @@ class ConfigurationTest(unittest.TestCase):
         self.Instrument = Counter_53131A(bus_connection='GPIB0::3::INSTR')
 
     def test_reset(self):
+        self.setup()
         self.Instrument.reset()
