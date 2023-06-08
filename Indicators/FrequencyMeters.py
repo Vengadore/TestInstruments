@@ -6,8 +6,7 @@ class Counter_53131A:
     def __init__(self, bus_connection:str = "GPIB0"):
         self.name = "Universal Counter 53131A"
         self.bus = bus_connection
-        if not self.SIM:
-             self.init_visa_connection()
+        self.init_visa_connection()
     
     def __name__(self):
         return "indicator"
@@ -21,3 +20,9 @@ class Counter_53131A:
     def reset(self):
         self.inst.write("*RST")
         return 0
+    
+    def disconnect(self):
+        self.inst.close()
+
+    def get_IDN(self):
+        return self.inst.query("*IDN?")
