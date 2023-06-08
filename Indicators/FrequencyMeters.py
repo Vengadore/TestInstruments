@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 class Counter_53131A:
-    def __init__(self, bus_connection:str = "GPIB0",simulation = True):
+    def __init__(self, bus_connection:str = "GPIB0"):
         self.name = "Universal Counter 53131A"
         self.bus = bus_connection
         if not self.SIM:
