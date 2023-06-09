@@ -26,3 +26,6 @@ class Counter_53131A:
 
     def get_IDN(self):
         return self.inst.query("*IDN?")
+    
+    def get_ERROR(self):
+        return self.inst.query(":SYST:ERR?")
