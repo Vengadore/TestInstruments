@@ -60,6 +60,13 @@ class ConfigurationTest(unittest.TestCase):
         self.assertEqual(float(imp),50.0)
         self.close_conection()
 
+    def test_configure_Gate_Time(self):
+        self.setup()
+        self.Instrument.set_Gate_Time(1.000)
+        tension = self.Instrument.inst.query(":FREQ:ARM:STOP:TIM?")
+        self.assertEqual(float(tension),1.0)
+        self.close_conection()
+
     
 
 if __name__ == '__main__':

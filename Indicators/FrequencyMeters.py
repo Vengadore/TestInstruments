@@ -62,4 +62,7 @@ class Counter_53131A:
                self.write(":INP1:IMP 50") 
             elif valor == '1 MOHM':
                 self.write(":INP1:IMP 1E6") 
+    
+    def set_Gate_Time(self,time = 5.000):
+        self.write(f":FREQ:ARM:STOP:TIM {time}")
 
