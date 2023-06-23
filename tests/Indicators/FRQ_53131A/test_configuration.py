@@ -83,7 +83,7 @@ class ConfigurationTest(unittest.TestCase):
 
     def test_configure_SENSTVTY_MED(self):
         self.setup()
-        self.Instrument.set_SENSTVTY("MED")
+        self.Instrument.set_SENSTVTY(SENSITIVITY_MEDIUM)
         sens = self.Instrument.inst.query(":SENS:EVEN1:HYST:REL?")
         self.assertEqual(sens,'+50')
         self.close_conection()

@@ -46,7 +46,7 @@ class Counter_53131A:
     def set_SLOPE(self,polaridad):
         self.write(f":SENS:EVEN1:SLOP {polaridad}")
 
-    def set_SENSTVTY(self,sensibilidad):
+    def set_SENSTVTY(self,sensibilidad = "MED"):
         if sensibilidad == "HI" :
             self.write(f":SENS:EVEN1:HYST:REL 0")
         elif sensibilidad == "MED" :
@@ -54,10 +54,10 @@ class Counter_53131A:
         elif sensibilidad == "LO" :
             self.write(f":SENS:EVEN1:HYST:REL 100")
 
-    def set_COUPLING(self,tipo_AC_DC):
+    def set_COUPLING(self,tipo_AC_DC = "AC"):
             self.write(f":INP1:COUP {tipo_AC_DC}")
 
-    def set_IMPEDANCE(self,valor):
+    def set_IMPEDANCE(self,valor = "1 MOHM"):
             if valor == '50 OHM':
                self.write(":INP1:IMP 50") 
             elif valor == '1 MOHM':
