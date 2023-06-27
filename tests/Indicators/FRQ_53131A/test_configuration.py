@@ -1,7 +1,8 @@
+from time import sleep
 import unittest
 import sys
 sys.path.append("./Indicators")
-from FrequencyMeters import Counter_53131A 
+from FrequencyMeters import *
 
     ## Available tests
 #   FILTER
@@ -13,7 +14,9 @@ from FrequencyMeters import Counter_53131A
 
 class ConfigurationTest(unittest.TestCase):
     def setup(self):
+        sleep(5)
         self.Instrument = Counter_53131A(bus_connection='GPIB0::3::INSTR')
+        self.Instrument.reset()
 
     def close_conection(self):
         self.Instrument.disconnect()
@@ -41,7 +44,7 @@ class ConfigurationTest(unittest.TestCase):
 
     def test_configure_SENSTVTY_LO(self):
         self.setup()
-        self.Instrument.set_SENSTVTY("LO")
+        self.Instrument.set_SENSTVTY(SENSITIVITY_LOW)
         sens = self.Instrument.inst.query(":SENS:EVEN1:HYST:REL?")
         self.assertEqual(sens,'+100')
         self.close_conection()
@@ -104,9 +107,14 @@ class ConfigurationTest(unittest.TestCase):
 
     def test_configure_SENSTVTY_HI(self):
         self.setup()
-        self.Instrument.set_SENSTVTY("HI")
+        self.Instrument.set_SENSTVTY(SENSITIVITY_HIGH)
         sens = self.Instrument.inst.query(":SENS:EVEN1:HYST:REL?")
         self.assertEqual(sens,'+0')
+        self.close_conection()
+
+    def test_configure_RUN(self):
+        self.setup()
+        self.Instrument.RUN()
         self.close_conection()
 
 

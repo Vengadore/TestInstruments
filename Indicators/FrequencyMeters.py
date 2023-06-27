@@ -1,6 +1,7 @@
 import pyvisa
 import numpy as np
 import time
+from constants import *
 
 class Counter_53131A:
     def __init__(self, bus_connection:str = "GPIB0"):
@@ -65,4 +66,10 @@ class Counter_53131A:
     
     def set_Gate_Time(self,time = 5.000):
         self.write(f":FREQ:ARM:STOP:TIM {time}")
+
+    def read(self):
+        return self.inst.query("READ?")
+        
+    def RUN(self):
+        self.write(":INIT:CONT ON")
 
