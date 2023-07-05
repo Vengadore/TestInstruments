@@ -7,5 +7,5 @@ setup(
    author='Cesar Carrillo',
    author_email='crcg1995@hotmail.com',
    packages=['Generators','Indicators'],  #same as name
-   install_requires=['numpy'], #external packages as dependencies
+   install_requires=['numpy','pyvisa'], #external packages as dependencies
 )
