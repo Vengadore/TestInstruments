@@ -8,7 +8,6 @@ import pyvisa
 
 OPERATE_STATE = True
 
-
 class FLUKE_5500A:
 
     def __init__(self, indice = 0):

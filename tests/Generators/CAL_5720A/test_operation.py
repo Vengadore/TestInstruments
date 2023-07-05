@@ -4,13 +4,6 @@ import sys
 sys.path.append("./Generators")
 from cal5XXXA import FLUKE_5500A, OPERATE_STATE
 
-    ## Available tests
-#   FILTER
-#   LEVEL
-#   AUTO TRG   
-#   SLOPE
-#   SENSITIVITY 
-#   GATE 
 
 class ConfigurationTest(unittest.TestCase):
     def setup(self):
@@ -37,8 +30,6 @@ class ConfigurationTest(unittest.TestCase):
         sleep(3)
         self.close_conection()
 
-
-       
 
 if __name__ == '__main__':
     unittest.main()
