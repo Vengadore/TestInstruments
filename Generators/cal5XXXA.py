@@ -1,11 +1,12 @@
 from os import lseek
 import pyvisa
-import numpy as np
-import time
-import re
+
 # A device in the 5XXX scheme is meant to generate a value with an associated magnitude.
 # We can imitate the behavior of a calibrator by knowing which commands it recieves and
 # returning the expected value.
+
+
+OPERATE_STATE = True
 
 class FLUKE_5500A:
 
@@ -20,6 +21,9 @@ class FLUKE_5500A:
         self.inst = rm.open_resource(self.bus)
         self.inst.timeout = 5000
         return 1
+    
+    def disconnect(self):
+        self.inst.close()
 
     def seleccionarGPIB (self):
         rm=pyvisa.ResourceManager()
@@ -31,8 +35,18 @@ class FLUKE_5500A:
     def send_visa_cmd(self,cmd):
         self.inst.write(cmd)
         self.inst.write("*WAI")
-        return 1 
+        return 1
     
+    def operate(self):
+        return self.inst.write("OPER")
+
+    def stby(self):
+        return self.inst.write("STBY")
+    
+    def status(self):
+        estado = self.inst.query("OPER?")
+        estado = bool(estado.replace("\n",""))
+        return estado == OPERATE_STATE
 
     def convertion(self,valor): 
         Prefijos = {"K":1E3,"M":1E6,"G":1E9,"m":1E-3,"uA":1E-6,"nA":1E-9,"V":1E0,"A":1E0,"OHM":1E0, "mV":1E-3, "mA":1E-3, "mF":1E-3, "uF":1E-6, "nF":1E-9, "pF":1E-12}
