@@ -1,7 +1,5 @@
 import pyvisa
-import numpy as np
-import time
-from constants import *
+from .constants import *
 
 class Counter_53131A:
     def __init__(self, bus_connection:str = 'GPIB0::0::INSTR'):
@@ -72,4 +70,3 @@ class Counter_53131A:
         
     def RUN(self):
         self.write(":INIT:CONT ON")
-

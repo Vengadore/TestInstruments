@@ -1,11 +1,4 @@
-from ast import In
 import pyvisa
-from os import read
-import numpy as np
-import time
-import re
-from Generators import cal5XXXA
-
 
 class Keysight_3458A:
     def __init__(self, bus_connection: str = 'GPIB0::1::INSTR', simulation=False):
@@ -171,28 +164,3 @@ class Keysight_3458A:
             lectura = float(lectura)
             Samples.append(lectura)
         return Samples
-
-    def __call__(self, indicator: cal5XXXA.FLUKE_5720A):
-        # The basic operation of the multímeter is to performa reading from an external source
-        if indicator.__name__ == "generator":
-            # simulate wait time
-            time.sleep(4)
-            x, unit, frequency, frq_unit = indicator.read_setting()
-            if unit not in ["V", "A", "OHM"]:
-                print("ERROR, MAGNITUDE NOT SUPPORTED!!")
-                return 1
-            if unit == "OHM":
-                frequency = 0
-            if frequency == 0:
-                frq_unit = ""
-            if unit == "A":
-                unit = "I"
-            if frequency > 0:
-                unit += "AC"
-            reading = np.random.normal(x, x*10E-6)
-            reading = np.round(reading, 7)
-
-            return f"{reading} {unit}"
-        else:
-            print("YOU CAN'T READ FROM THIS DEVICE")
-            return 1

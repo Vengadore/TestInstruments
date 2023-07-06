@@ -21,3 +21,15 @@ An **indicator** is an instrument capable of reading a value from a generator, i
 - Multimeter 3458A
 - Multimeter 34401
 - Multimeter 34410
+
+
+### Test
+
+```
+python.exe -m unittest tests/Generators/CAL_5500A/test_DCV_configuration.py
+
+python -m unittest tests/Generators/CAL_5500A
+
+```
+
+
