@@ -6,6 +6,6 @@ setup(
    description='A useful module to control lab instruments',
    author='Cesar Carrillo',
    author_email='crcg1995@hotmail.com',
-   packages=['TestInstruments.Generators','TestInstruments.Indicators'],
+   packages=['TestInstruments','TestInstruments.Generators','TestInstruments.Indicators'],
    install_requires=['numpy','pyvisa'],
 )
