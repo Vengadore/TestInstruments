@@ -1,5 +1,6 @@
 from Indicators.KeysightDMM import Keysight_3458A
 import unittest
+import time
 
 # Test parameters
 SIMULATION = False
@@ -45,6 +46,7 @@ class ConfigurationTest(unittest.TestCase):
         log(f"**** TESTING {AvailableConfigurations}")
         log(f"**** SKIPPING {SkippedTests}")
         for parameter_to_test in AvailableConfigurations:
+            time.sleep(4)
             test_function = map_tests[parameter_to_test]
             expectedValue = configuration[parameter_to_test]
             # Test
@@ -84,7 +86,7 @@ class ConfigurationTest(unittest.TestCase):
 
 # Start Multimeter and test enviroment
 Instrument = Keysight_3458A(
-    bus_connection='GPIB0::14::INSTR', simulation=SIMULATION)
+    bus_connection='GPIB0::23::INSTR', simulation=SIMULATION)
 TEST = ConfigurationTest()
 # Assign device to TEST
 TEST.device = Instrument

@@ -99,7 +99,7 @@ class CalibratorConfiguration:
 
 # Start Multimeter and test enviroment
 
-Instrument = FLUKE_5500A('GPIB0::0::INSTR')
+Instrument = FLUKE_5500A('GPIB0::4::INSTR')
 
 ConfigReader = CalibratorConfiguration()
 # Assign device to TEST

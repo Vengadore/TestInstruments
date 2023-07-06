@@ -41,7 +41,7 @@ class FLUKE_5500A:
 
     def status(self):
         estado = self.inst.query("OPER?")
-        estado = bool(estado.replace("\n", ""))
+        estado = estado.replace("\n", "") == "1"
         return estado == OPERATE_STATE
 
     def convertion(self, valor):

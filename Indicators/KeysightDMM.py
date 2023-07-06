@@ -84,7 +84,7 @@ class Keysight_3458A:
             val1 = valor
             return val1
 
-    def DCV(self, alcanceDCV: str | float = "100 m"):
+    def DCV(self, alcanceDCV = "100 m"):
         if not self.SIM:
             ranges = self.convertion(alcanceDCV)
             self.inst.write(f"FUNC DCV {ranges}")
@@ -92,7 +92,7 @@ class Keysight_3458A:
             self.SET_NPLC(100)
         return 0
 
-    def ACVSYNC(self, alcanceACVSYNC: str | float = "10 m"):
+    def ACVSYNC(self, alcanceACVSYNC = "10 m"):
         if not self.SIM:
             ranges = self.convertion(alcanceACVSYNC)
             self.inst.write(f"ACV {ranges}")
@@ -103,7 +103,7 @@ class Keysight_3458A:
             self.SET_RES(0.000001)
         return 0
 
-    def OHM(self, hilos, alcanceOHM: str | float = "10 OHM"):
+    def OHM(self, hilos, alcanceOHM = "10 OHM"):
         if not self.SIM:
             ranges = self.convertion(alcanceOHM)
             if hilos == "OHMF":
@@ -118,7 +118,7 @@ class Keysight_3458A:
                 self.SET_OCOMP("OFF")
         return 0
 
-    def ACI(self, alcanceACI: str | float = "100 uA"):
+    def ACI(self, alcanceACI = "100 uA"):
         if not self.SIM:
             ranges = self.convertion(alcanceACI)
             self.inst.write(f"FUNC ACI {ranges}")
@@ -126,7 +126,7 @@ class Keysight_3458A:
             self.SET_NPLC(100)
         return 0
 
-    def DCI(self, alcanceDCI: str | float = "100 uA"):
+    def DCI(self, alcanceDCI = "100 uA"):
         if not self.SIM:
             ranges = self.convertion(alcanceDCI)
             self.inst.write(f"FUNC DCI {ranges}")
@@ -134,7 +134,7 @@ class Keysight_3458A:
             self.SET_NPLC(100)
         return 0
 
-    def FREQ(self, FSOURCE, resolutionFREQPER: float = 0.00001, alcanceACVorACI: str | float = "100 m"):
+    def FREQ(self, FSOURCE, resolutionFREQPER: float = 0.00001, alcanceACVorACI = "100 m"):
         ranges = self.convertion(alcanceACVorACI)
         if FSOURCE == "ACV":
             self.inst.write("FSOURCE ACV")
@@ -144,7 +144,7 @@ class Keysight_3458A:
             self.inst.write(f"FUNC FREQ {ranges},{resolutionFREQPER}")
         return 0
 
-    def PER(self, FSOURCE, resolutionFREQPER, alcanceACVorACI: str | float = "100 m"):
+    def PER(self, FSOURCE, resolutionFREQPER, alcanceACVorACI = "100 m"):
         if not self.SIM:
             ranges = self.convertion(alcanceACVorACI)
             if FSOURCE == "ACV":
