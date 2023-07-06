@@ -4,7 +4,7 @@ import time
 from constants import *
 
 class Counter_53131A:
-    def __init__(self, bus_connection:str = "GPIB0"):
+    def __init__(self, bus_connection:str = 'GPIB0::0::INSTR'):
         self.name = "Universal Counter 53131A"
         self.bus = bus_connection
         self.init_visa_connection()
@@ -12,9 +12,9 @@ class Counter_53131A:
     def __name__(self):
         return "indicator"
 
-    def init_visa_connection(self):
+    def init_visa_connection(self, termination_character = "\r"):
         rm = pyvisa.ResourceManager()
-        self.inst = rm.open_resource(self.bus, read_termination = "\r")
+        self.inst = rm.open_resource(self.bus, read_termination = termination_character)
         self.inst.timeout = 5000
         return 0
     
@@ -31,8 +31,8 @@ class Counter_53131A:
     def get_ERROR(self):
         return self.inst.query(":SYST:ERR?")
     
-    def write(self,command):
-        self.inst.write(command)
+    def write(self,cmd:str):
+        self.inst.write(cmd)
 
     def set_LPF(self,enable = True):
         if enable == True:
