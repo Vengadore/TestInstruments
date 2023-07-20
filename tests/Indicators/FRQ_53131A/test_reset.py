@@ -1,11 +1,11 @@
+from Indicators.FrequencyMeters import *
+from time import sleep
 import unittest
-import sys
-sys.path.append("./Indicators")
-from FrequencyMeters import Counter_53131A 
 
-## Una vez establecida la conexión, esperar 5 segundos, mandar
-## comando de reset y después de 4 segundos pedir el ID.
-## El comando es *RST
+# Una vez establecida la conexión, esperar 5 segundos, mandar
+# comando de reset y después de 4 segundos pedir el ID.
+# El comando es *RST
+
 
 class ResetTest(unittest.TestCase):
     def setup(self):
@@ -18,6 +18,7 @@ class ResetTest(unittest.TestCase):
 
     def close_conection(self):
         self.Instrument.disconnect()
+
 
 if __name__ == '__main__':
     unittest.main()

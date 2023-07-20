@@ -1,17 +1,15 @@
-from time import sleep
+from Generators.cal5XXXA import *
 import unittest
-import sys
-sys.path.append("./Generators")
-from cal5XXXA import FLUKE_5500A, OPERATE_STATE
+import time
 
 
 class ConfigurationTest(unittest.TestCase):
     def setup(self):
-        sleep(5)
-        self.Instrument = FLUKE_5500A(0)
+        time.sleep(5)
+        self.Instrument = FLUKE_5500A('GPIB0::0::INSTR')
         self.Instrument.reset()
-        sleep(2)
-    
+        time.sleep(2)
+
     def close_conection(self):
         self.Instrument.disconnect()
 
@@ -22,12 +20,12 @@ class ConfigurationTest(unittest.TestCase):
         estado = self.Instrument.status()
         self.assertEqual(estado, OPERATE_STATE,
                          "El calibrador no fue seteado")
-        sleep(3)
+        time.sleep(3)
         self.Instrument.stby()
         estado = self.Instrument.status()
         self.assertNotEqual(estado, OPERATE_STATE,
-                         "El calibrador no fue seteado")
-        sleep(3)
+                            "El calibrador no fue seteado")
+        time.sleep(3)
         self.close_conection()
 
 
