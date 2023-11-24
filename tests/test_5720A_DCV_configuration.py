@@ -4,7 +4,7 @@ import time
 
 
 # Test parameters
-SIMULATION = False
+SIMULATION = True
 LOGS = True
 
 # Test functions
@@ -123,7 +123,7 @@ class CalibratorConfiguration:
 
 
 # Start Multimeter and test enviroment
-Instrument = FLUKE_5720A('GPIB0::0::INSTR')
+Instrument = FLUKE_5720A('GPIB0::0::INSTR', simulation=SIMULATION)
 ConfigReader = CalibratorConfiguration()
 # Assign device to TEST
 ConfigReader.device = Instrument

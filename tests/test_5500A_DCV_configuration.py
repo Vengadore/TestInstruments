@@ -3,7 +3,7 @@ import unittest
 import time
 
 # Test parameters
-SIMULATION = False
+SIMULATION = True
 LOGS = True
 
 # Test functions
@@ -99,7 +99,7 @@ class CalibratorConfiguration:
 
 # Start Multimeter and test enviroment
 
-Instrument = FLUKE_5500A('GPIB0::4::INSTR')
+Instrument = FLUKE_5500A('GPIB0::4::INSTR', simulation=SIMULATION)
 
 ConfigReader = CalibratorConfiguration()
 # Assign device to TEST
