@@ -1,3 +1,8 @@
+import sys
+import os
+
+# Add parent folder to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import sys
 import os
@@ -58,7 +63,7 @@ class ConfigurationTest(unittest.TestCase):
             # Test
             log(f"Testing parameter {parameter_to_test}:{expectedValue}")
             test_function(expectedValue)
-            time.sleep(5)
+            time.sleep(5) if not SIMULATION else time.sleep(0.1)
         return 0
 
     def Measurement_function(self, expected: str):

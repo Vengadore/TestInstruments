@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Add parent folder to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from Generators.cal5XXXA import *
 import unittest
 import time
@@ -50,7 +56,7 @@ class CalibratorConfiguration:
             test_function = map_tests[parameter_to_test]
             ActualValue = test_function()
             TrueParameters[parameter_to_test] = ActualValue
-            time.sleep(2)
+            time.sleep(2) if not SIMULATION else None
         return TrueParameters
 
     def Generate_Function(self):
@@ -123,7 +129,8 @@ class CalibratorConfiguration:
 
 
 # Start Multimeter and test enviroment
-Instrument = FLUKE_5720A('GPIB0::0::INSTR', simulation=SIMULATION)
+bus = "MOCK0::mock1::INSTR" if SIMULATION else "GPBI0::4::INSTR"
+Instrument = FLUKE_5720A(bus_connection=bus, simulation=SIMULATION)
 ConfigReader = CalibratorConfiguration()
 # Assign device to TEST
 ConfigReader.device = Instrument
