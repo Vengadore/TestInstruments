@@ -4,12 +4,6 @@ import os
 # Add parent folder to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import sys
-import os
-
-# Add parent folder to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from Indicators.KeysightDMM import Keysight_3458A
 import unittest
 import time

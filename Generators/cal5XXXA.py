@@ -1,6 +1,7 @@
 import pyvisa
 from visa_mock.base.base_mocker import BaseMocker, scpi
 from visa_mock.base.register import register_resource
+import re
 
 # A device in the 5XXX scheme is meant to generate a value with an associated magnitude.
 # We can imitate the behavior of a calibrator by knowing which commands it recieves and
@@ -267,17 +268,14 @@ class FLUKE_5500A:
         estado = estado.replace("\n", "") == "1"
         return estado == OPERATE_STATE
 
-    def convertion(self, valor):
-        Prefijos = {"K": 1E3, "M": 1E6, "G": 1E9, "m": 1E-3, "uA": 1E-6, "nA": 1E-9, "V": 1E0,
-                    "A": 1E0, "OHM": 1E0, "mV": 1E-3, "mA": 1E-3, "mF": 1E-3, "uF": 1E-6, "nF": 1E-9, "pF": 1E-12}
-        if isinstance(valor, str):
-            print(valor.split(" "))
-            val, pref = valor.split(" ")
-            val = float(val) * Prefijos[pref]
-            return val
-        elif isinstance(valor, float) or isinstance(valor, int):
-            val1 = valor
-            return val1
+    def convertion(self, input) -> float:
+        """Converts a string with a value and a prefix to a float"""
+        prefixes = "p|u|μ|m|k|M|G|T"
+        prefix_value = {"p":1e-12,"u":1e-6,"μ":1e-6,"m":1e-3,"k":1e3,"M":1e6,"G":1e9,"T":1e12,"":1}
+        if isinstance(input, str):
+            input, prefix, unit = re.match(f"^(\d*\.?\d*)\s?({prefixes}?)(.*)", input).groups()
+            input = float(input)*prefix_value[prefix]
+        return input
 
     def set_DCV(self, amplitud_ch1, amplitud_ch2=None):
         cha1 = self.convertion(amplitud_ch1)
