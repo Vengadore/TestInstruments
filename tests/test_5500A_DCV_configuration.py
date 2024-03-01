@@ -1,9 +1,15 @@
+import sys
+import os
+
+# Add parent folder to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from Generators.cal5XXXA import *
 import unittest
 import time
 
 # Test parameters
-SIMULATION = False
+SIMULATION = True
 LOGS = True
 
 # Test functions
@@ -17,10 +23,22 @@ def log(message):
 class CalibratorConfiguration:
     def __init__(self) -> None:
         self.device = object
-    # Constats for test
-    FUNCTION = {'DCV': "DCV", 'ACV': "ACV", 'DCI': "DCI", 'ACI': "ACI",
-                'RES': "RES", 'CAP': "CAP", 'RTD': "RTD", 'TC_OUT': "TC_OUT",
-                'DC_POWER': "DC_POWER", 'AC_POWER': "AC_POWER", 'DCV_DCV': "DCV_DCV", 'ACV_ACV': "ACV_ACV", 'TC_MEAS': "TC_MEAS"}
+        # Constants for test
+        self.FUNCTION = {
+            'DCV': "DCV",
+            'ACV': "ACV",
+            'DCI': "DCI",
+            'ACI': "ACI",
+            'RES': "RES",
+            'CAP': "CAP",
+            'RTD': "RTD",
+            'TC_OUT': "TC_OUT",
+            'DC_POWER': "DC_POWER",
+            'AC_POWER': "AC_POWER",
+            'DCV_DCV': "DCV_DCV",
+            'ACV_ACV': "ACV_ACV",
+            'TC_MEAS': "TC_MEAS"
+        }
 
     # Available tests
 #   AMPLITUDE_P
@@ -50,7 +68,7 @@ class CalibratorConfiguration:
             test_function = map_tests[parameter_to_test]
             ActualValue = test_function()
             TrueParameters[parameter_to_test] = ActualValue
-            time.sleep(2)
+            time.sleep(2) if not SIMULATION else None
         return TrueParameters
 
     def Generate_Function(self):
@@ -98,8 +116,10 @@ class CalibratorConfiguration:
 
 
 # Start Multimeter and test enviroment
+bus = "MOCK0::mock1::INSTR" if SIMULATION else "GPBI0::4::INSTR"
 
-Instrument = FLUKE_5500A('GPIB0::4::INSTR')
+Instrument = FLUKE_5500A(bus_connection=bus,
+                         simulation=SIMULATION)
 
 ConfigReader = CalibratorConfiguration()
 # Assign device to TEST
@@ -113,6 +133,9 @@ ConfigReader.device = Instrument
 class DC_Tests(unittest.TestCase):
 
     def test_00(self):
+        if SIMULATION:
+            log("\nThis test is not available in simulation mode")
+            return None
         # Configuration: 100 mV, 7 V @ 0 HZ
         GENERATE_FUNCTION = "DCV_DCV"
         AMPLITUDE_P1 = 0.1
@@ -120,8 +143,6 @@ class DC_Tests(unittest.TestCase):
         ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
                             "GENERATE_FUNCTION": GENERATE_FUNCTION,
                             "AMPLITUDE_P2": AMPLITUDE_P2}
-
-        Instrument.set_DCV(AMPLITUDE_P1, AMPLITUDE_P2)
         # Test Parameters
         TrueParameters = ConfigReader.test_configuration(ConfigParameters)
         self.assertEqual(
@@ -147,6 +168,9 @@ class DC_Tests(unittest.TestCase):
             TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
 
     def test_02(self):
+        if SIMULATION:
+            log("\nThis test is not available in simulation mode")
+            return None
         # Configuration: 100 V, 1 V @ 0 HZ
         GENERATE_FUNCTION = "DCV_DCV"
         AMPLITUDE_P1 = 100
@@ -166,7 +190,9 @@ class DC_Tests(unittest.TestCase):
             TrueParameters["AMPLITUDE_P2"], ConfigParameters["AMPLITUDE_P2"])
 
     def test_03(self):
-
+        if SIMULATION:
+            log("\nThis test is not available in simulation mode")
+            return None
         # Configuration: 100 mV, 1 V @ 60 HZ
         GENERATE_FUNCTION = "ACV_ACV"
         AMPLITUDE_P1 = 0.1
@@ -211,7 +237,9 @@ class DC_Tests(unittest.TestCase):
             TrueParameters["FREQUENCY"], ConfigParameters["FREQUENCY"])
 
     def test_05(self):
-
+        if SIMULATION:
+            log("\nThis test is not available in simulation mode")
+            return None
         # Configuration: 100 V, 7 V @ 60 HZ
         GENERATE_FUNCTION = "ACV_ACV"
         AMPLITUDE_P1 = 100
@@ -236,7 +264,9 @@ class DC_Tests(unittest.TestCase):
             TrueParameters["FREQUENCY"], ConfigParameters["FREQUENCY"])
 
     def test_06(self):
-
+        if SIMULATION:
+            log("\nThis test is not available in simulation mode")
+            return None
         # Configuration: 100 mV, 1 V @ 1000 HZ
         GENERATE_FUNCTION = "ACV_ACV"
         AMPLITUDE_P1 = 0.1
@@ -282,7 +312,9 @@ class DC_Tests(unittest.TestCase):
             TrueParameters["FREQUENCY"], ConfigParameters["FREQUENCY"])
 
     def test_08(self):
-
+        if SIMULATION:
+            log("\nThis test is not available in simulation mode")
+            return None
         # Configuration: 100 V, 5 V @ 1000 HZ
         GENERATE_FUNCTION = "ACV_ACV"
         AMPLITUDE_P1 = 100
@@ -307,7 +339,6 @@ class DC_Tests(unittest.TestCase):
             TrueParameters["FREQUENCY"], ConfigParameters["FREQUENCY"])
 
     def test_09(self):
-
         # Configuration: 0.1 mA @ 0 HZ
         GENERATE_FUNCTION = "DCI"
         AMPLITUDE_P1 = 0.1
@@ -324,7 +355,6 @@ class DC_Tests(unittest.TestCase):
             TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
 
     def test_10(self):
-
         # Configuration: 1 A @ 0 HZ
         GENERATE_FUNCTION = "DCI"
         AMPLITUDE_P1 = 1
@@ -341,7 +371,6 @@ class DC_Tests(unittest.TestCase):
             TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
 
     def test_11(self):
-
         # Configuration: 10 A @ 0 HZ
         GENERATE_FUNCTION = "DCI"
         AMPLITUDE_P1 = 10
@@ -357,38 +386,223 @@ class DC_Tests(unittest.TestCase):
         self.assertEqual(
             TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
 
-####################
-###### TEST 12 #####
-####################
-#
-# Configuration: 0.1 mA @ 60 HZ
-#GENERATE_FUNCTION  = "ACI"
-#AMPLITUDE_P1       = 0.1
-#FREQUENCY          = 60
-# ConfigParameters = {"AMPLITUDE_P1"      :AMPLITUDE_P1,
-#                    "GENERATE_FUNCTION" :GENERATE_FUNCTION,
-#                    "FREQUENCY"         :FREQUENCY}
-#
-# Instrument.set_ACI(AMPLITUDE_P1,FREQUENCY)
-# Checking for correct configuration
-# TEST.test_configuration(ConfigParameters)
-#
-####################
-###### TEST 13 #####
-####################
-#
-# Configuration: 1 A @ 0 HZ
-#GENERATE_FUNCTION  = "ACI"
-#AMPLITUDE_P1       = 1
-#FREQUENCY          = 60
-# ConfigParameters = {"AMPLITUDE_P1"      :AMPLITUDE_P1,
-#                    "GENERATE_FUNCTION" :GENERATE_FUNCTION,
-#                    "FREQUENCY"         :FREQUENCY}
-#
-# Instrument.set_ACI(AMPLITUDE_P1,FREQUENCY)
-# Checking for correct configuration
-# TEST.test_configuration(ConfigParameters)
-#
+    def test_12(self):
+        # Configuration: 0.1 mA @ 60 HZ
+        GENERATE_FUNCTION = "ACI"
+        AMPLITUDE_P1 = 0.1
+        FREQUENCY = 60
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "FREQUENCY": FREQUENCY}
+
+        Instrument.set_ACI(AMPLITUDE_P1, FREQUENCY)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"],
+                         ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"],
+                         ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["FREQUENCY"],
+                         ConfigParameters["FREQUENCY"])
+    def test_13(self):
+        # Configuration: 1 A @ 60 HZ
+        GENERATE_FUNCTION = "ACI"
+        AMPLITUDE_P1 = 1
+        FREQUENCY = 60
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "FREQUENCY": FREQUENCY}
+
+        Instrument.set_ACI(AMPLITUDE_P1, FREQUENCY)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"],
+                         ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"],
+                         ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["FREQUENCY"],
+                         ConfigParameters["FREQUENCY"])
+
+    def test_14(self):
+        # Configuration: 10 A @ 60 HZ
+        GENERATE_FUNCTION = "ACI"
+        AMPLITUDE_P1 = 10
+        FREQUENCY = 60
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "FREQUENCY": FREQUENCY}
+
+        Instrument.set_ACI(AMPLITUDE_P1, FREQUENCY)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"],
+                         ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"],
+                         ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["FREQUENCY"],
+                         ConfigParameters["FREQUENCY"])
+    
+    def test_15(self):
+        # Configuration: 10 OHM WIRE2
+        GENERATE_FUNCTION = "RES"
+        AMPLITUDE_P1 = 10
+        ZCOMP = 2
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "ZCOMP": ZCOMP}
+
+        Instrument.set_OHM(AMPLITUDE_P1, ZCOMP)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"],
+                         ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"],
+                         ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["ZCOMP"],
+                         ConfigParameters["ZCOMP"])
+        
+    def test_16(self):
+        # Configuration: 100 OHM WIRE4
+        GENERATE_FUNCTION = "RES"
+        AMPLITUDE_P1 = 100
+        ZCOMP = 4
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "ZCOMP": ZCOMP}
+
+        Instrument.set_OHM(AMPLITUDE_P1, ZCOMP)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"],
+                         ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"],
+                         ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["ZCOMP"],
+                         ConfigParameters["ZCOMP"])
+        
+    def test_17(self):
+        # Configuration: 100 OHM NONE
+        GENERATE_FUNCTION = "RES"
+        AMPLITUDE_P1 = 15
+        ZCOMP = 0
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "ZCOMP": ZCOMP}
+
+        Instrument.set_OHM(AMPLITUDE_P1, ZCOMP)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"],
+                         ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"],
+                         ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["ZCOMP"],
+                         ConfigParameters["ZCOMP"])
+    
+    def test_18(self):
+        # Configuration: 100 nF
+        GENERATE_FUNCTION = "CAP"
+        AMPLITUDE_P1 =  0.0000001
+        ZCOMP =  0
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "ZCOMP": ZCOMP}
+
+        Instrument.set_CAP(AMPLITUDE_P1, ZCOMP)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"], ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["ZCOMP"], ConfigParameters["ZCOMP"])
+
+    def test_19(self):
+        # Configuration: 100 uF
+        GENERATE_FUNCTION = "CAP"
+        AMPLITUDE_P1 =  0.0001
+        ZCOMP =  0
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "ZCOMP": ZCOMP}
+
+        Instrument.set_CAP(AMPLITUDE_P1, ZCOMP)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"], ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["ZCOMP"], ConfigParameters["ZCOMP"])
+
+    def test_20(self):
+        # Configuration: 100 mF
+        GENERATE_FUNCTION = "CAP"
+        AMPLITUDE_P1 =  0.1
+        ZCOMP =  2
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "ZCOMP": ZCOMP}
+
+        Instrument.set_CAP(AMPLITUDE_P1, ZCOMP)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"], ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["ZCOMP"], ConfigParameters["ZCOMP"])
+    
+    def test_21(self):
+        # Configuration: 100 °C WIRE2 RTD PT385_200
+        GENERATE_FUNCTION = "RTD"
+        AMPLITUDE_P1 = 100
+        ZCOMP = 2
+        RTD_TYPE = "PT385"
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "ZCOMP": ZCOMP,
+                            "RTD_TYPE": RTD_TYPE}
+
+        Instrument.set_RTD(AMPLITUDE_P1, RTD_TYPE, ZCOMP)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"], ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["ZCOMP"], ConfigParameters["ZCOMP"])
+        self.assertEqual(TrueParameters["RTD_TYPE"], ConfigParameters["RTD_TYPE"])
+
+    def test_22(self):
+        # Configuration: 100 °C WIRE4 RTD PT3916
+        GENERATE_FUNCTION = "RTD"
+        AMPLITUDE_P1 = 100
+        ZCOMP = 4
+        RTD_TYPE = "PT3926"
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "ZCOMP": ZCOMP,
+                            "RTD_TYPE": RTD_TYPE}
+
+        Instrument.set_RTD(AMPLITUDE_P1, RTD_TYPE, ZCOMP)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"], ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["ZCOMP"], ConfigParameters["ZCOMP"])
+        self.assertEqual(TrueParameters["RTD_TYPE"], ConfigParameters["RTD_TYPE"])
+
+    def _test_23(self):
+        # Configuration: 100 °C NONE RTD CU10
+        GENERATE_FUNCTION = "RTD"
+        AMPLITUDE_P1 = 100
+        ZCOMP = 0
+        RTD_TYPE = "CU10"
+        ConfigParameters = {"AMPLITUDE_P1": AMPLITUDE_P1,
+                            "GENERATE_FUNCTION": GENERATE_FUNCTION,
+                            "ZCOMP": ZCOMP,
+                            "RTD_TYPE": RTD_TYPE}
+
+        Instrument.set_RTD(AMPLITUDE_P1, RTD_TYPE, ZCOMP)
+        # Checking for correct configuration
+        TrueParameters = ConfigReader.test_configuration(ConfigParameters)
+        self.assertEqual(TrueParameters["AMPLITUDE_P1"], ConfigParameters["AMPLITUDE_P1"])
+        self.assertEqual(TrueParameters["GENERATE_FUNCTION"], ConfigParameters["GENERATE_FUNCTION"])
+        self.assertEqual(TrueParameters["ZCOMP"], ConfigParameters["ZCOMP"])
+        self.assertEqual(TrueParameters["RTD_TYPE"], ConfigParameters["RTD_TYPE"])
 ####################
 ###### TEST 14 #####
 ####################

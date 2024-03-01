@@ -1,9 +1,15 @@
+import sys
+import os
+
+# Add parent folder to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from Indicators.KeysightDMM import Keysight_3458A
 import unittest
 import time
 
 # Test parameters
-SIMULATION = False
+SIMULATION = True
 LOGS = True
 
 
@@ -19,7 +25,8 @@ class ConfigurationTest(unittest.TestCase):
         self.setup()
 
     def setup(self):
-        self.device = Keysight_3458A(bus_connection='GPIB0::23::INSTR',
+        bus = "MOCK0::mock1::INSTR" if SIMULATION else "GPIB0::23::INSTR"
+        self.device = Keysight_3458A(bus_connection=bus,
                                      simulation=SIMULATION)
         # Constats for test
         self.FUNCTION = {1: "DCV", 2: "ACV", 3: "ACDCV", 4: "OHM",
@@ -50,7 +57,7 @@ class ConfigurationTest(unittest.TestCase):
             # Test
             log(f"Testing parameter {parameter_to_test}:{expectedValue}")
             test_function(expectedValue)
-            time.sleep(5)
+            time.sleep(5) if not SIMULATION else time.sleep(0.1)
         return 0
 
     def Measurement_function(self, expected: str):
@@ -91,7 +98,7 @@ class ConfigurationTest(unittest.TestCase):
                             "MEASUREMENT_RANGE": MEASUREMENT_RANGE,
                             "NPLC": NPLC,
                             "NDIG": NDIG}
-        self.device.DCV(MEASUREMENT_RANGE)
+        self.device.DCV("10 V")
         self.run_configuration(ConfigParameters)
 
     def test_configuration_DCV_10V_NPLC_0_1(self):
@@ -126,6 +133,54 @@ class ConfigurationTest(unittest.TestCase):
     def test_configuration_ACVSYNC_100mv(self):
         MEASUREMENT_FUNCTION = "ACV"
         MEASUREMENT_RANGE = 0.1
+        ConfigParameters = {"MEASUREMENT_FUNCTION": MEASUREMENT_FUNCTION,
+                            "MEASUREMENT_RANGE": MEASUREMENT_RANGE}
+        self.device.ACVSYNC("100 mV")
+        self.run_configuration(ConfigParameters)
+
+    def test_configuration_ACVSYNC_1V_string(self):
+        MEASUREMENT_FUNCTION = "ACV"
+        MEASUREMENT_RANGE = 1
+        ConfigParameters = {"MEASUREMENT_FUNCTION": MEASUREMENT_FUNCTION,
+                            "MEASUREMENT_RANGE": MEASUREMENT_RANGE}
+        self.device.ACVSYNC("1 V")
+        self.run_configuration(ConfigParameters)
+
+    def test_configuration_ACVSYNC_1V_float(self):
+        MEASUREMENT_FUNCTION = "ACV"
+        MEASUREMENT_RANGE = 1
+        ConfigParameters = {"MEASUREMENT_FUNCTION": MEASUREMENT_FUNCTION,
+                            "MEASUREMENT_RANGE": MEASUREMENT_RANGE}
+        self.device.ACVSYNC(MEASUREMENT_RANGE)
+        self.run_configuration(ConfigParameters)
+
+    def test_configuration_ACVSYNC_10V_string(self):
+        MEASUREMENT_FUNCTION = "ACV"
+        MEASUREMENT_RANGE = 10
+        ConfigParameters = {"MEASUREMENT_FUNCTION": MEASUREMENT_FUNCTION,
+                            "MEASUREMENT_RANGE": MEASUREMENT_RANGE}
+        self.device.ACVSYNC("10 V")
+        self.run_configuration(ConfigParameters)
+
+    def test_configuration_ACVSYNC_10V_float(self):
+        MEASUREMENT_FUNCTION = "ACV"
+        MEASUREMENT_RANGE = 10
+        ConfigParameters = {"MEASUREMENT_FUNCTION": MEASUREMENT_FUNCTION,
+                            "MEASUREMENT_RANGE": MEASUREMENT_RANGE}
+        self.device.ACVSYNC(MEASUREMENT_RANGE)
+        self.run_configuration(ConfigParameters)
+
+    def test_configuration_ACVSYNC_100V_string(self):
+        MEASUREMENT_FUNCTION = "ACV"
+        MEASUREMENT_RANGE = 100
+        ConfigParameters = {"MEASUREMENT_FUNCTION": MEASUREMENT_FUNCTION,
+                            "MEASUREMENT_RANGE": MEASUREMENT_RANGE}
+        self.device.ACVSYNC("100 V")
+        self.run_configuration(ConfigParameters)
+
+    def test_configuration_ACVSYNC_100V_float(self):
+        MEASUREMENT_FUNCTION = "ACV"
+        MEASUREMENT_RANGE = 100
         ConfigParameters = {"MEASUREMENT_FUNCTION": MEASUREMENT_FUNCTION,
                             "MEASUREMENT_RANGE": MEASUREMENT_RANGE}
         self.device.ACVSYNC(MEASUREMENT_RANGE)
@@ -306,6 +361,7 @@ class ConfigurationTest(unittest.TestCase):
                             "MEASUREMENT_RANGE": MEASUREMENT_RANGE}
         self.device.ACI(MEASUREMENT_RANGE)
         self.run_configuration(ConfigParameters)
+
 
 
 if __name__ == '__main__':

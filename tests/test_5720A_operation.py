@@ -1,14 +1,22 @@
+import sys
+import os
+
+# Add parent folder to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from Generators.cal5XXXA import *
 import unittest
 import time
 
+# Test parameters
+SIMULATION = True
 
 class ConfigurationTest(unittest.TestCase):
     def setup(self):
-        time.sleep(5)
-        self.Instrument = FLUKE_5500A('GPIB0::0::INSTR')
+        bus = "MOCK0::mock1::INSTR" if SIMULATION else "GPBI0::4::INSTR"
+        self.Instrument = FLUKE_5720A(bus_connection=bus, simulation=SIMULATION)
         self.Instrument.reset()
-        time.sleep(2)
+        time.sleep(2) if not SIMULATION else None
 
     def close_conection(self):
         self.Instrument.disconnect()
@@ -20,12 +28,12 @@ class ConfigurationTest(unittest.TestCase):
         estado = self.Instrument.status()
         self.assertEqual(estado, OPERATE_STATE,
                          "El calibrador no fue seteado")
-        time.sleep(3)
+        time.sleep(3) if not SIMULATION else None
         self.Instrument.stby()
         estado = self.Instrument.status()
         self.assertNotEqual(estado, OPERATE_STATE,
                             "El calibrador no fue seteado")
-        time.sleep(3)
+        time.sleep(3) if not SIMULATION else None
         self.close_conection()
 
 
